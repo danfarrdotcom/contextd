@@ -1,0 +1,176 @@
+{
+  "name": "contextd-vscode",
+  "displayName": "contextd",
+  "description": "The context layer for AI-assisted development",
+  "version": "0.1.0",
+  "publisher": "contextd",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "AI"
+  ],
+  "keywords": [
+    "ai",
+    "context",
+    "claude",
+    "cursor",
+    "copilot",
+    "mcp"
+  ],
+  "activationEvents": [
+    "workspaceContains:.context/project.md",
+    "onCommand:contextd.init"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "contextd.init",
+        "title": "contextd: Initialize in this project",
+        "icon": "$(add)"
+      },
+      {
+        "command": "contextd.export",
+        "title": "contextd: Export context",
+        "icon": "$(export)"
+      },
+      {
+        "command": "contextd.check",
+        "title": "contextd: Check context health",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "contextd.addDecision",
+        "title": "contextd: Add architecture decision (ADR)",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "contextd.openFile",
+        "title": "Open file",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "contextd.refreshTree",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "contextd.addModuleContext",
+        "title": "contextd: Add module context for current file",
+        "icon": "$(file-add)"
+      },
+      {
+        "command": "contextd.copyContextForFile",
+        "title": "contextd: Copy relevant context to clipboard",
+        "icon": "$(clippy)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "contextd",
+          "title": "contextd",
+          "icon": "assets/icon-mono.svg"
+        }
+      ]
+    },
+    "views": {
+      "contextd": [
+        {
+          "id": "contextd.contextTree",
+          "name": "Context Files"
+        },
+        {
+          "id": "contextd.healthView",
+          "name": "Health"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "contextd.refreshTree",
+          "when": "view == contextd.contextTree",
+          "group": "navigation"
+        },
+        {
+          "command": "contextd.export",
+          "when": "view == contextd.contextTree",
+          "group": "navigation"
+        },
+        {
+          "command": "contextd.addDecision",
+          "when": "view == contextd.contextTree",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "contextd.openFile",
+          "when": "viewItem == contextFile",
+          "group": "inline"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "contextd.copyContextForFile",
+          "group": "contextd",
+          "when": "resourceExtname != ''"
+        },
+        {
+          "command": "contextd.addModuleContext",
+          "group": "contextd"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "contextd",
+      "properties": {
+        "contextd.autoExportOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically re-export when context files change"
+        },
+        "contextd.defaultExportFormat": {
+          "type": "string",
+          "default": "claude-md",
+          "enum": [
+            "claude-md",
+            "cursorrules",
+            "raw"
+          ],
+          "description": "Default export format"
+        },
+        "contextd.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show contextd status in the status bar"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "build:dev": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
+    "package": "vsce package",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@contextd/core": "workspace:*",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.0",
+    "gray-matter": "^4.0.3"
+  }
+}
