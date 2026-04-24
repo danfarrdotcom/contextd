@@ -1,0 +1,33 @@
+{
+  "name": "@contextd/core",
+  "version": "0.1.0",
+  "description": "Shared context logic for contextd tools",
+  "type": "module",
+  "main": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
