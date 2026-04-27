@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Create Release PR or Publish
+        uses: changesets/action@v1
+        with:
+          publish: pnpm changeset publish
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-vscode:
+    name: Release VS Code Extension
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build core (required before vscode build)
+        run: pnpm --filter @contextd/core build
+
+      - name: Check if vscode version tag already exists
+        id: version-check
+        run: |
+          VERSION=$(node -p "require('./packages/vscode/package.json').version")
+          TAG="contextd-vscode@${VERSION}"
+          if git ls-remote --tags origin | grep -qF "refs/tags/${TAG}"; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and package vscode extension
+        if: steps.version-check.outputs.skip == 'false'
+        run: |
+          cd packages/vscode
+          pnpm build
+          pnpm package
+
+      - name: Publish to VS Code Marketplace
+        if: steps.version-check.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.version-check.outputs.version }}"
+          cd packages/vscode
+          pnpm exec vsce publish --packagePath "contextd-${VERSION}.vsix" --pat "$VSCE_PAT"
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Create GitHub Release with .vsix
+        if: steps.version-check.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.version-check.outputs.version }}"
+          TAG="${{ steps.version-check.outputs.tag }}"
+          gh release create "$TAG" \
+            --title "contextd VS Code v${VERSION}" \
+            --generate-notes \
+            "packages/vscode/contextd-${VERSION}.vsix#VS Code Extension (.vsix)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
