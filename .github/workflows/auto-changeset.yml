@@ -1,0 +1,40 @@
+name: Auto Changeset
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  auto-changeset:
+    name: Generate changeset from conventional commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Check out the PR branch so we can commit back to it
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate changeset
+        id: gen
+        run: |
+          node scripts/auto-changeset.mjs
+          if git diff --quiet HEAD; then
+            echo "created=false" >> $GITHUB_OUTPUT
+          else
+            echo "created=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changeset to PR branch
+        if: steps.gen.outputs.created == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .changeset/
+          git commit -m "chore: auto-generate changeset [skip ci]"
+          git push
