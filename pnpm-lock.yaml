@@ -17,7 +17,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@contextd/core':
+      '@danfarrdotcom/core':
         specifier: workspace:*
         version: link:../core
       '@modelcontextprotocol/sdk':
@@ -72,7 +72,7 @@ importers:
 
   packages/vscode:
     dependencies:
-      '@contextd/core':
+      '@danfarrdotcom/core':
         specifier: workspace:*
         version: link:../core
       fs-extra:
