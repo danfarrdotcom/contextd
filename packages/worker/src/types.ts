@@ -27,15 +27,18 @@ export interface Collection {
   updated_at: number;
 }
 
+export type ContextType = 'project' | 'architecture' | 'conventions' | 'decision' | 'module';
+export type ContextPriority = 'high' | 'medium' | 'low' | 'normal';
+
 export interface Context {
   id: string;
   collection_id: string;
   slug: string;
-  type: string;
+  type: ContextType;
   title: string;
-  tags: string; // JSON array string
+  tags: string;
   scope: string | null;
-  priority: string | null;
+  priority: ContextPriority | null;
   version: number;
   updated_at: number;
 }
