@@ -4,6 +4,7 @@
   "description": "The context layer for AI-assisted development",
   "version": "0.1.0",
   "publisher": "contextd",
+  "repository": {"type": "git", "url": "https://github.com/danfarrdotcom/contextd"},
   "private": true,
   "engines": {
     "vscode": "^1.85.0"
@@ -156,7 +157,7 @@
     "build": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
     "build:dev": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
     "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
-    "package": "vsce package",
+    "package": "vsce package --no-dependencies",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {

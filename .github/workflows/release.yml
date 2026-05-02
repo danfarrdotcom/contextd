@@ -61,7 +61,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build core (required before vscode build)
-        run: pnpm --filter @contextd/core build
+        run: pnpm --filter @danfarrdotcom/core build
 
       - name: Check if vscode version tag already exists
         id: version-check
@@ -88,7 +88,7 @@ jobs:
         run: |
           VERSION="${{ steps.version-check.outputs.version }}"
           cd packages/vscode
-          pnpm exec vsce publish --packagePath "contextd-${VERSION}.vsix" --pat "$VSCE_PAT"
+          pnpm exec vsce publish --packagePath "contextd-vscode-${VERSION}.vsix" --pat "$VSCE_PAT"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
@@ -100,6 +100,6 @@ jobs:
           gh release create "$TAG" \
             --title "contextd VS Code v${VERSION}" \
             --generate-notes \
-            "packages/vscode/contextd-${VERSION}.vsix#VS Code Extension (.vsix)"
+            "packages/vscode/contextd-vscode-${VERSION}.vsix#VS Code Extension (.vsix)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
