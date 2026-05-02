@@ -47,7 +47,8 @@ export async function authCommand(action) {
         body: JSON.stringify({ name: keyName }),
       });
       if (!res.ok) {
-        const body = await res.json();
+        let body = {};
+        try { body = await res.json(); } catch {}
         spinner.fail('Authentication failed');
         console.log(chalk.red(`\n  ${body.error || res.statusText}\n`));
         process.exit(1);
@@ -61,7 +62,8 @@ export async function authCommand(action) {
         body: JSON.stringify({ slug: orgSlug, name: orgSlug, keyName }),
       });
       if (!res.ok) {
-        const body = await res.json();
+        let body = {};
+        try { body = await res.json(); } catch {}
         spinner.fail('Failed to create org');
         console.log(chalk.red(`\n  ${body.error || res.statusText}\n`));
         process.exit(1);

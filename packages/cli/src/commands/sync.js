@@ -169,9 +169,10 @@ async function syncPublish(rootDir, options) {
 
   for (const context of toPublish) {
     const slug = path.basename(context.path, '.md');
-    const type = context.path.includes('/decisions/') ? 'decision'
+    const type = context.meta?.type
+      || (context.path.includes('/decisions/') ? 'decision'
       : context.path.includes('/modules/') ? 'module'
-      : slug;
+      : 'context');
 
     if (options.dryRun) {
       console.log(chalk.gray(`  would push: ${slug} (${type})`));
@@ -195,7 +196,8 @@ async function syncPublish(rootDir, options) {
         }),
       });
       if (!res.ok) {
-        const body = await res.json();
+        let body = {};
+        try { body = await res.json(); } catch {}
         spinner.fail(`${slug}: ${body.error || res.statusText}`);
       } else {
         spinner.succeed(chalk.green(slug));
