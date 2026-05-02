@@ -14,4 +14,4 @@ binding = "KV"
 id = "4d5c1a537e3c401a8c4a5497aaebab72"
 
 [vars]
-ENVIRONMENT = "development"
+ENVIRONMENT = "production"

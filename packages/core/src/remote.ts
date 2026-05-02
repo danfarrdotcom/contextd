@@ -37,14 +37,16 @@ export async function loadRemoteContexts(rootDir: string): Promise<ContextFile[]
   return Promise.all(files.map(loadContextFile));
 }
 
-export function parseSourceUrl(url: string): { org: string; collection: string; apiBase: string } | null {
-  // contextd://acme/eng -> https://contextd-worker.workers.dev/v1/acme/eng
+const DEFAULT_API_BASE = 'https://contextd-worker.dan-farr6298.workers.dev/v1';
+
+export function parseSourceUrl(url: string, defaultApiBase = DEFAULT_API_BASE): { org: string; collection: string; apiBase: string } | null {
+  // contextd://acme/eng -> <defaultApiBase>/acme/eng
   // https://my-worker.workers.dev/v1/acme/eng -> direct
   if (url.startsWith('contextd://')) {
     const rest = url.slice('contextd://'.length);
     const [org, collection] = rest.split('/');
     if (!org || !collection) return null;
-    return { org, collection, apiBase: 'https://contextd-worker.workers.dev/v1' };
+    return { org, collection, apiBase: defaultApiBase };
   }
   if (url.startsWith('https://')) {
     const u = new URL(url);

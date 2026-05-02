@@ -36,7 +36,7 @@ async function syncAdd(rootDir, url, options) {
     process.exit(1);
   }
 
-  const parsed = parseSourceUrl(url);
+  const parsed = parseSourceUrl(url, process.env.CONTEXTD_API_URL);
   if (!parsed) {
     console.log(chalk.red(`\n  Invalid URL: ${url}`));
     console.log(chalk.gray('  Expected: contextd://org/collection or https://...\n'));
