@@ -7,8 +7,8 @@ import { contextsRouter } from './routes/contexts';
 
 const app = new Hono<{ Bindings: Env; Variables: { orgId: string } }>();
 
-// Auth required for all /orgs write routes and private collection reads
-app.use('/v1/orgs/*', authMiddleware);
+// Auth required for all /orgs write routes (POST /orgs is public bootstrap)
+app.use('/v1/orgs/:org/*', authMiddleware);
 
 app.route('/v1', orgsRouter);
 app.route('/v1', collectionsRouter);
