@@ -103,7 +103,7 @@ export async function serveCommand(options) {
     const ctx = await loadAllContext(rootDir);
     const remote = await loadRemoteContexts(rootDir);
     const merged = await mergeContexts(ctx.all, remote);
-    const decisions = merged.filter(c => ctx.decisions.includes(c) || c._remote);
+    const decisions = merged.filter(c => c.path.includes('/decisions/'));
     if (decisions.length === 0) {
       return { content: [{ type: 'text', text: 'No architecture decisions recorded.' }] };
     }
