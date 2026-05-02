@@ -149,8 +149,10 @@ contextsRouter.get('/:org/:collection/sync', async (c) => {
   const bindings: unknown[] = [collectionId];
 
   if (since) {
+    const sinceMs = Number(since);
+    if (!Number.isFinite(sinceMs)) return c.json({ error: '`since` must be a numeric timestamp' }, 400);
     query += ' AND updated_at > ?';
-    bindings.push(Number(since));
+    bindings.push(sinceMs);
   }
   if (typeFilter) {
     query += ' AND type = ?';

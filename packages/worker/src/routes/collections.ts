@@ -48,3 +48,32 @@ collectionsRouter.get('/:org/:collection', async (c) => {
   return c.json(row);
 });
 
+collectionsRouter.patch('/orgs/:org/:collection', async (c) => {
+  const callerOrgId = c.get('orgId');
+  const { org, collection } = c.req.param();
+  if (callerOrgId !== org) return c.json({ error: 'Forbidden' }, 403);
+  const { name, isPublic } = await c.req.json<{ name?: string; isPublic?: boolean }>();
+  const now = Date.now();
+  if (name !== undefined) {
+    await c.env.DB.prepare(
+      'UPDATE collections SET name = ?, updated_at = ? WHERE org_id = ? AND slug = ?'
+    ).bind(name, now, org, collection).run();
+  }
+  if (isPublic !== undefined) {
+    await c.env.DB.prepare(
+      'UPDATE collections SET is_public = ?, updated_at = ? WHERE org_id = ? AND slug = ?'
+    ).bind(isPublic ? 1 : 0, now, org, collection).run();
+  }
+  return c.json({ updated: true });
+});
+
+collectionsRouter.delete('/orgs/:org/:collection', async (c) => {
+  const callerOrgId = c.get('orgId');
+  const { org, collection } = c.req.param();
+  if (callerOrgId !== org) return c.json({ error: 'Forbidden' }, 403);
+  await c.env.DB.prepare(
+    'DELETE FROM collections WHERE org_id = ? AND slug = ?'
+  ).bind(org, collection).run();
+  return c.json({ deleted: true });
+});
+

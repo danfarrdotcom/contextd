@@ -41,3 +41,13 @@ orgsRouter.post('/orgs/:org/keys', async (c) => {
   return c.json({ id: keyId, key }, 201);
 });
 
+orgsRouter.delete('/orgs/:org/keys/:id', async (c) => {
+  const callerOrgId = c.get('orgId');
+  const targetOrg = c.req.param('org');
+  if (callerOrgId !== targetOrg) return c.json({ error: 'Forbidden' }, 403);
+  const keyId = c.req.param('id');
+  await c.env.DB.prepare('DELETE FROM api_keys WHERE id = ? AND org_id = ?')
+    .bind(keyId, targetOrg).run();
+  return c.json({ deleted: true });
+});
+
