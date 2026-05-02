@@ -7,7 +7,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "build": "wrangler deploy --dry-run --outdir dist",
-    "test": "npx tsx --test 'test/**/*.test.ts'",
+    "test": "npx tsx --test 'test/middleware/**/*.test.ts'",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "type-check": "tsc --noEmit",
     "lint": "echo 'no linter configured'"

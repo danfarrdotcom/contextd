@@ -16,7 +16,7 @@ export function generateKey(): string {
   return `ctxd_${hex}`;
 }
 
-export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+export async function authMiddleware(c: Context<{ Bindings: Env; Variables: { orgId: string } }>, next: Next) {
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return c.json({ error: 'Missing or invalid Authorization header' }, 401);

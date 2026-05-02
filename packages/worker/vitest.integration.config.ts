@@ -10,6 +10,6 @@ export default defineConfig({
         wrangler: { configPath: './wrangler.toml' },
       },
     },
-    include: ['test/**/*.integration.test.ts'],
+    include: ['test/routes/**/*.test.ts', 'test/**/*.integration.test.ts'],
   },
 });
