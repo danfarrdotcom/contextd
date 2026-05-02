@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { getContextStats, loadAllContext, ContextStats } from '@contextd/core';
+import { getContextStats, loadAllContext, ContextStats } from '@danfarrdotcom/core';
 import { glob } from 'glob';
 
 export class HealthViewProvider implements vscode.WebviewViewProvider {

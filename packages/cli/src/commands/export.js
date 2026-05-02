@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
-import { findRoot, loadAllContext, getRelevantContext, buildExportOutput } from '@contextd/core';
+import { findRoot, loadAllContext, getRelevantContext, buildExportOutput } from '@danfarrdotcom/core';
 
 const FORMATS = {
   'claude-md': { file: 'CLAUDE.md', label: 'CLAUDE.md (Claude Code)' },

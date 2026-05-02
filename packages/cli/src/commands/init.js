@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
-import { CONTEXT_DIR, findRoot } from '@contextd/core';
+import { CONTEXT_DIR, findRoot } from '@danfarrdotcom/core';
 
 const TODAY = new Date().toISOString().split('T')[0];
 

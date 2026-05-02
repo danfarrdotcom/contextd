@@ -9,7 +9,7 @@ import {
   getRelevantContext,
   buildExportOutput,
   CONTEXT_DIR,
-} from '@contextd/core';
+} from '@danfarrdotcom/core';
 import { ContextTreeProvider } from './treeProvider';
 import { HealthViewProvider } from './healthView';
 

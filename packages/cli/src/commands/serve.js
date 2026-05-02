@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { findRoot, loadAllContext, getRelevantContext } from '@contextd/core';
+import { findRoot, loadAllContext, getRelevantContext } from '@danfarrdotcom/core';
 
 export async function serveCommand(options) {
   const rootDir = await findRoot(process.cwd());

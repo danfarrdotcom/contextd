@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { glob } from 'glob';
 import matter from 'gray-matter';
-import { findRoot, CONTEXT_DIR } from '@contextd/core';
+import { findRoot, CONTEXT_DIR } from '@danfarrdotcom/core';
 
 const TODAY = new Date().toISOString().split('T')[0];
 

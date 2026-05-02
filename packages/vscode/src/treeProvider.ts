@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { loadAllContext, AllContext, ContextFile } from '@contextd/core';
+import { loadAllContext, AllContext, ContextFile } from '@danfarrdotcom/core';
 
 export type TreeItemKind = 'section' | 'contextFile' | 'empty' | 'action';
 

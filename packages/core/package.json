@@ -1,5 +1,5 @@
 {
-  "name": "@contextd/core",
+  "name": "@danfarrdotcom/core",
   "version": "0.1.0",
   "description": "Shared context logic for contextd tools",
   "type": "module",

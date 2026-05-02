@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import { findRoot, getContextStats, loadAllContext } from '@contextd/core';
+import { findRoot, getContextStats, loadAllContext } from '@danfarrdotcom/core';
 
 export async function checkCommand(options) {
   const rootDir = await findRoot(process.cwd());
