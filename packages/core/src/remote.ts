@@ -48,7 +48,8 @@ export function parseSourceUrl(url: string): { org: string; collection: string; 
   }
   if (url.startsWith('https://')) {
     const u = new URL(url);
-    const parts = u.pathname.replace('/v1/', '').split('/');
+    if (!u.pathname.includes('/v1/')) return null;
+    const parts = u.pathname.replace('/v1/', '').split('/').filter(Boolean);
     if (parts.length < 2) return null;
     return { org: parts[0], collection: parts[1], apiBase: `${u.origin}/v1` };
   }
