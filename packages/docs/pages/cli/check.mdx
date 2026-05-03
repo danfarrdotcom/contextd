@@ -1,0 +1,36 @@
+# contextd check
+
+Validate the health and completeness of your context files.
+
+## Usage
+
+```bash
+contextd check [options]
+```
+
+## Options
+
+| Flag | Description |
+|------|-------------|
+| `--fix` | Auto-fix simple issues (e.g. missing frontmatter, empty sections) |
+
+## What it checks
+
+The `check` command validates:
+
+- **Required files exist** — `project.md`, `architecture.md`, `conventions.md` should be present
+- **Frontmatter is valid** — Each file has parseable YAML frontmatter
+- **Content is not empty** — Files have more than just the template scaffolding
+- **Decisions are numbered** — ADR files follow the `NNN-slug.md` naming pattern
+- **Module scopes are valid** — Module context files reference real directories
+
+## Example output
+
+```
+Checking context health...
+  project.md      OK
+  architecture.md OK
+  conventions.md  WARNING - empty section "Testing"
+  decisions/      OK (3 ADRs)
+  modules/        OK (2 modules)
+```

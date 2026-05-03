@@ -1,0 +1,87 @@
+# Getting Started
+
+## Installation
+
+Install contextd globally via npm:
+
+```bash
+npm install -g contextd
+```
+
+Or run it directly with npx:
+
+```bash
+npx contextd init
+```
+
+## Initialize a project
+
+Navigate to your project root and run:
+
+```bash
+contextd init
+```
+
+This creates a `.context/` directory with starter templates:
+
+```
+.context/
+  project.md       ← Project overview and goals
+  architecture.md  ← System architecture and data flow
+  conventions.md   ← Coding conventions and patterns
+  decisions/       ← Architecture decision records (ADRs)
+  modules/         ← Module-specific context files
+```
+
+## Edit your context files
+
+Open each `.md` file and fill in the details about your project. The frontmatter at the top of each file is used for metadata and can be left as-is initially.
+
+```markdown
+---
+title: Project Overview
+updated: 2026-05-03
+---
+
+# Project Overview
+
+## What is this?
+A web application for managing...
+
+## Tech Stack
+- **Language**: TypeScript
+- **Framework**: Next.js
+- **Database**: PostgreSQL
+```
+
+## Export to AI tools
+
+Once your context files are populated, export them for your AI tool of choice:
+
+```bash
+# Export to CLAUDE.md (default)
+contextd export
+
+# Export to .cursorrules
+contextd export --format cursorrules
+
+# Export raw text to stdout
+contextd export --format raw
+```
+
+The exported file is placed at your project root and will be automatically picked up by Claude Code, Cursor, or any other AI assistant that reads these files.
+
+## Check context health
+
+Validate that your context files are complete and well-formed:
+
+```bash
+contextd check
+```
+
+## What's next
+
+- Learn about each [CLI command](/cli/export)
+- Set up the [MCP server](/mcp-server) for real-time context
+- Install the [VS Code extension](/vscode-extension)
+- Understand the [context file format](/context-files)

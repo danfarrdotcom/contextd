@@ -1,0 +1,49 @@
+# VS Code Extension
+
+The `contextd` VS Code extension provides a visual interface for managing your project's context directly from the editor.
+
+## Installation
+
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=contextd).
+
+## Features
+
+### Context Tree View
+
+Browse all your context files in a dedicated sidebar view. Click any file to open and edit it directly.
+
+### Health View
+
+See the status of your context files at a glance. The health view highlights missing files, outdated content, and structural issues.
+
+### Status Bar Indicator
+
+A `$` icon in the status bar shows whether `contextd` is initialized in your workspace. Click it to run a health check.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `contextd: Initialize` | Create a `.context/` directory with template files |
+| `contextd: Export` | Export context to CLAUDE.md, .cursorrules, or copy raw output to clipboard |
+| `contextd: Check Health` | Run a health check and show results in the Health View |
+| `contextd: Add Architecture Decision` | Create a new ADR with a pre-filled template |
+| `contextd: Add Module Context` | Create module context for the current file's directory |
+| `contextd: Copy Context for File` | Copy all context relevant to the active file to clipboard |
+| `contextd: Refresh` | Refresh the context tree and health views |
+
+### Auto-Export
+
+Enable `contextd.autoExportOnSave` in your settings to automatically regenerate `CLAUDE.md` or `.cursorrules` whenever a context file is saved.
+
+### Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `contextd.defaultExportFormat` | `claude-md` | Default format for exports |
+| `contextd.autoExportOnSave` | `false` | Auto-regenerate export files on context file save |
+| `contextd.showStatusBar` | `true` | Show the status bar indicator |
+
+### File Watching
+
+The extension watches `.context/**/*.md` for changes and automatically refreshes the tree and health views when files are created, modified, or deleted.

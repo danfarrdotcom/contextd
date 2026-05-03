@@ -1,0 +1,59 @@
+# contextd decision
+
+Manage architecture decision records (ADRs) in your project.
+
+## Usage
+
+```bash
+contextd decision <action> [title]
+```
+
+## Actions
+
+### `add`
+
+Create a new ADR:
+
+```bash
+contextd decision add "Why we use tRPC instead of REST"
+```
+
+This creates a file in `.context/decisions/` with the next sequential number (e.g. `004-why-we-use-trpc-instead-of-rest.md`) and pre-filled ADR template:
+
+```markdown
+---
+title: "Why we use tRPC instead of REST"
+date: 2026-05-03
+status: accepted
+tags: []
+---
+
+# ADR-004: Why we use tRPC instead of REST
+
+## Context
+What is the issue that is motivating this decision?
+
+## Decision
+What are we doing?
+
+## Consequences
+What becomes easier or harder?
+
+## Alternatives Considered
+```
+
+### `list`
+
+List all existing ADRs:
+
+```bash
+contextd decision list
+```
+
+### `view`
+
+View a specific ADR by number or slug:
+
+```bash
+contextd decision view 004
+```

@@ -1,0 +1,61 @@
+# contextd export
+
+Export your project context to a format that AI tools can consume.
+
+## Usage
+
+```bash
+contextd export [options]
+```
+
+## Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--format <format>` | Output format: `claude-md`, `cursorrules`, `mcp`, `raw` | `claude-md` |
+| `--output <path>` | Output file path (defaults to format standard) | — |
+| `--files <files>` | Comma-separated list of files to get context for | — |
+
+## Formats
+
+### `claude-md` (default)
+
+Exports to `CLAUDE.md` at your project root. This file is automatically read by Claude Code and other Anthropic-powered tools.
+
+```bash
+contextd export
+# Writes to CLAUDE.md
+```
+
+### `cursorrules`
+
+Exports to `.cursorrules` at your project root. Cursor reads this file to understand your project conventions.
+
+```bash
+contextd export --format cursorrules
+# Writes to .cursorrules
+```
+
+### `mcp`
+
+Outputs JSON suitable for MCP (Model Context Protocol) server consumption.
+
+```bash
+contextd export --format mcp
+```
+
+### `raw`
+
+Prints all context to stdout. Useful for piping into other commands or manual inspection.
+
+```bash
+contextd export --format raw
+```
+
+## Targeting specific files
+
+When you pass `--files`, contextd exports only the context relevant to those files (matching against module scopes and project context):
+
+```bash
+contextd export --files src/api/routes.ts,src/db/schema.ts
+```

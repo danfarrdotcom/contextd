@@ -1,0 +1,103 @@
+# Context Files
+
+`contextd` stores all project context in a `.context/` directory at your project root.
+
+## Directory structure
+
+```
+.context/
+├── project.md          # High-level project overview
+├── architecture.md     # System architecture and design
+├── conventions.md      # Coding standards and patterns
+├── decisions/          # Architecture decision records (ADRs)
+│   ├── 001-why-typescript.md
+│   └── 002-api-design.md
+└── modules/            # Module-specific context
+    ├── api.md
+    └── ui.md
+```
+
+## Root-level files
+
+### `project.md`
+
+A high-level overview of your project. Should cover:
+
+- What the project does
+- Tech stack (language, framework, database)
+- Key goals and non-goals
+- Things to avoid
+
+### `architecture.md`
+
+Documents the system architecture:
+
+- System overview and component diagram description
+- Directory structure explanation
+- Data flow patterns
+- External services and integrations
+
+### `conventions.md`
+
+Coding standards and patterns the team follows:
+
+- Naming conventions
+- File organization
+- Design patterns used or avoided
+- Error handling approach
+- Testing strategy
+
+## Decisions
+
+The `decisions/` directory contains Architecture Decision Records (ADRs). Each file follows the naming pattern `NNN-slug.md` and contains:
+
+- Title and date
+- Status (proposed, accepted, deprecated)
+- Context describing the issue
+- The decision made
+- Consequences
+- Alternatives considered
+
+## Modules
+
+The `modules/` directory contains context for specific directories or areas of your codebase. Each file describes:
+
+- The purpose of the module
+- Key patterns used
+- Gotchas, rules, or conventions specific to that area
+
+Module files should be named after the directory they cover (e.g., `api.md` for the `api/` directory) and include a `scope` field in the frontmatter.
+
+## File format
+
+All context files use Markdown with YAML frontmatter:
+
+```markdown
+---
+title: Project Overview
+updated: 2026-05-03
+---
+
+# Content here
+```
+
+Decision files include additional frontmatter fields:
+
+```markdown
+---
+title: "Why we use tRPC instead of REST"
+date: 2026-05-03
+status: accepted
+tags: ["api", "architecture"]
+---
+```
+
+Module context files include a `scope` field:
+
+```markdown
+---
+title: API Module
+scope: api
+updated: 2026-05-03
+---
+```

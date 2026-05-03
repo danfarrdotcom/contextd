@@ -1,0 +1,59 @@
+# Export Formats
+
+`contextd` can export your project context into formats that AI tools understand natively.
+
+## Available formats
+
+### CLAUDE.md
+
+```bash
+contextd export --format claude-md
+```
+
+Exports to `CLAUDE.md` in your project root. This file is automatically picked up by [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview#understanding-claudes-project-context) and included in every conversation.
+
+The output combines all context files (project overview, architecture, conventions, modules, and decisions) into a single Markdown document.
+
+### .cursorrules
+
+```bash
+contextd export --format cursorrules
+```
+
+Exports to `.cursorrules` in your project root. Cursor reads this file to understand your project's context, conventions, and preferences.
+
+### Raw output
+
+```bash
+contextd export --format raw
+```
+
+Prints the combined context to stdout. Useful for piping into other tools or copying manually.
+
+## Export options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--format <format>` | `claude-md` | Output format: `claude-md`, `cursorrules`, `mcp`, `raw` |
+| `--output <path>` | (format standard) | Custom output file path |
+| `--files <files>` | (all) | Comma-separated list of specific files to include |
+
+## Examples
+
+Export to a custom path:
+
+```bash
+contextd export --format claude-md --output ./docs/context.md
+```
+
+Export context relevant to specific files:
+
+```bash
+contextd export --format raw --files src/api/routes.ts,src/api/middleware.ts
+```
+
+## Choosing a format
+
+- **CLAUDE.md** — Use if you work with Claude Code. It reads this file automatically on every request.
+- **.cursorrules** — Use if you work with Cursor. It reads this file to tailor its behavior to your project.
+- **Raw** — Use for debugging, custom integrations, or when you want to paste context manually.

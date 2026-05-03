@@ -1,0 +1,41 @@
+# contextd serve
+
+Start contextd as an MCP (Model Context Protocol) server.
+
+## Usage
+
+```bash
+contextd serve [options]
+```
+
+## Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--port <port>` | Port to serve on | `3333` |
+
+## What it does
+
+Running `contextd serve` starts an MCP server that exposes your project context as tools that AI assistants can call:
+
+- **get_context** — Retrieve all project context
+- **get_file_context** — Get context relevant to a specific file
+- **list_decisions** — List architecture decision records
+- **get_decision** — View a specific ADR
+
+## MCP configuration
+
+To connect an MCP client, add this to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "command": "contextd",
+      "args": ["serve", "--port", "3333"]
+    }
+  }
+}
+```
+
+See the [MCP Server](/mcp-server) page for more details.

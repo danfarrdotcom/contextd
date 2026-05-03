@@ -1,0 +1,61 @@
+# MCP Server
+
+`contextd` can run as a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server, giving AI coding agents programmatic access to your project's context.
+
+## Starting the server
+
+```bash
+npx contextd serve
+```
+
+The server runs over stdio by default. It requires `@modelcontextprotocol/sdk` to be installed.
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--port <port>` | `3333` | Port to serve on |
+
+## Available tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `get_project_overview` | Get a high-level overview of the project | None |
+| `get_conventions` | Get coding conventions and standards for this project | None |
+| `get_relevant_context` | Get context relevant to specific files or areas of the codebase | `files` — list of file paths |
+| `list_decisions` | List all architecture decisions (ADRs) | None |
+| `get_module_context` | Get context for a specific module or directory | `module` — module name or path |
+
+## Configuring Claude Code
+
+Add an `.mcp.json` file to your project root:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "command": "npx",
+      "args": ["contextd", "serve"]
+    }
+  }
+}
+```
+
+## Configuring Cursor
+
+Add the server to Cursor's MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "contextd": {
+      "command": "npx",
+      "args": ["contextd", "serve"]
+    }
+  }
+}
+```
+
+## How it works
+
+When a tool is called, the MCP server reads from your `.context/` directory and returns the relevant content as structured text. The `get_relevant_context` tool automatically matches your requested files against module scopes to find the most relevant context files.
