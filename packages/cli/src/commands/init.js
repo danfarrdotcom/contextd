@@ -111,7 +111,7 @@ export async function initCommand(options) {
   const existing = await findRoot(cwd);
 
   if (existing) {
-    console.log(chalk.yellow(`\n  ⚠  contextd already initialized at ${existing}\n`));
+    console.error(chalk.yellow(`\n  ⚠  contextd already initialized at ${existing}\n`));
     return;
   }
 
@@ -152,7 +152,7 @@ export async function initCommand(options) {
 
     spinner.succeed(chalk.green('contextd initialized!'));
 
-    console.log(`
+    console.error(`
   ${chalk.bold('Created:')}
   ${chalk.gray(CONTEXT_DIR + '/')}
   ${chalk.gray('  project.md')}        ${chalk.dim('← describe your project')}

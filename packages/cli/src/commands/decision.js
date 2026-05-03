@@ -11,7 +11,7 @@ export async function decisionCommand(action, title) {
   const rootDir = await findRoot(process.cwd());
 
   if (!rootDir) {
-    console.log(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
+    console.error(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
     process.exit(1);
   }
 
@@ -21,9 +21,11 @@ export async function decisionCommand(action, title) {
     await listDecisions(decisionsDir);
   } else if (action === 'add') {
     await addDecision(decisionsDir, title);
+  } else if (action === 'view') {
+    await viewDecision(decisionsDir, title);
   } else {
-    console.log(chalk.red(`\n  ✗ Unknown action: ${action}`));
-    console.log(chalk.gray('  Usage: contextd decision add "Why we use tRPC"\n'));
+    console.error(chalk.red(`\n  ✗ Unknown action: ${action}`));
+    console.error(chalk.gray('  Usage: contextd decision add "Why we use tRPC"\n'));
   }
 }
 
@@ -31,12 +33,12 @@ async function listDecisions(decisionsDir) {
   const files = await glob('*.md', { cwd: decisionsDir, absolute: true });
 
   if (files.length === 0) {
-    console.log(chalk.yellow('\n  No decisions recorded yet.'));
-    console.log(chalk.gray('  Add one: contextd decision add "Why we chose X"\n'));
+    console.error(chalk.yellow('\n  No decisions recorded yet.'));
+    console.error(chalk.gray('  Add one: contextd decision add "Why we chose X"\n'));
     return;
   }
 
-  console.log(chalk.bold('\n  Architecture Decisions\n'));
+  console.error(chalk.bold('\n  Architecture Decisions\n'));
 
   for (const file of files.sort()) {
     const raw = await fs.readFile(file, 'utf-8');
@@ -45,17 +47,17 @@ async function listDecisions(decisionsDir) {
     const status = meta.status || 'accepted';
     const statusColor = status === 'accepted' ? chalk.green : status === 'deprecated' ? chalk.red : chalk.yellow;
 
-    console.log(
+    console.error(
       `  ${chalk.gray(num)}  ${meta.title || path.basename(file, '.md')}  ${statusColor(`[${status}]`)}`
     );
   }
 
-  console.log('');
+  console.error('');
 }
 
 async function addDecision(decisionsDir, title) {
   if (!title) {
-    console.log(chalk.red('\n  ✗ Please provide a title: contextd decision add "Why we use X"\n'));
+    console.error(chalk.red('\n  ✗ Please provide a title: contextd decision add "Why we use X"\n'));
     process.exit(1);
   }
 
@@ -95,6 +97,37 @@ What other options did we evaluate?
 
   await fs.writeFile(filePath, template);
 
-  console.log(chalk.green(`\n  ✓ Created ${path.relative(process.cwd(), filePath)}`));
-  console.log(chalk.gray(`  Fill in the context, decision, and consequences.\n`));
+  console.error(chalk.green(`\n  ✓ Created ${path.relative(process.cwd(), filePath)}`));
+  console.error(chalk.gray(`  Fill in the context, decision, and consequences.\n`));
+}
+
+async function viewDecision(decisionsDir, number) {
+  if (!number) {
+    console.error(chalk.red('\n  ✗ Please provide a decision number: contextd decision view 001\n'));
+    process.exit(1);
+  }
+
+  // Pad number if needed (e.g., "1" -> "001")
+  const paddedNum = number.padStart(3, '0');
+
+  // Find matching file
+  const files = await glob('*.md', { cwd: decisionsDir, absolute: true });
+  const match = files.find(f => path.basename(f).startsWith(paddedNum));
+
+  if (!match) {
+    console.error(chalk.red(`\n  ✗ No decision found matching number ${paddedNum}\n`));
+    process.exit(1);
+  }
+
+  const raw = await fs.readFile(match, 'utf-8');
+  const { data: meta, content } = matter(raw);
+
+  console.error(chalk.bold(`\n  ADR-${paddedNum}: ${meta.title || path.basename(match, '.md')}`));
+  console.error(chalk.gray(`  Status: ${meta.status || 'unknown'} · Date: ${meta.date || 'unknown'}`));
+  if (meta.tags?.length) {
+    console.error(chalk.gray(`  Tags: ${meta.tags.join(', ')}`));
+  }
+  console.error(chalk.gray('  ' + '─'.repeat(50)));
+  console.log(content);
+  console.error('');
 }

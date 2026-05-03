@@ -6,7 +6,8 @@
   "publisher": "DanFarr",
   "repository": {"type": "git", "url": "https://github.com/danfarrdotcom/contextd"},
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.85.0",
+    "node": ">=18.0.0"
   },
   "categories": [
     "Other",

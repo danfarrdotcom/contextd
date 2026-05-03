@@ -16,12 +16,12 @@ export async function getToken() {
 export async function authCommand(action) {
   if (action === 'logout') {
     await fs.remove(CONFIG_PATH);
-    console.log(chalk.green('\n  Logged out.\n'));
+    console.error(chalk.green('\n  Logged out.\n'));
     return;
   }
 
   if (action !== 'login') {
-    console.log(chalk.red(`\n  Unknown action: ${action}. Use login or logout.\n`));
+    console.error(chalk.red(`\n  Unknown action: ${action}. Use login or logout.\n`));
     process.exit(1);
   }
 
@@ -50,7 +50,7 @@ export async function authCommand(action) {
         let body = {};
         try { body = await res.json(); } catch {}
         spinner.fail('Authentication failed');
-        console.log(chalk.red(`\n  ${body.error || res.statusText}\n`));
+        console.error(chalk.red(`\n  ${body.error || res.statusText}\n`));
         process.exit(1);
       }
       const data = await res.json();
@@ -65,7 +65,7 @@ export async function authCommand(action) {
         let body = {};
         try { body = await res.json(); } catch {}
         spinner.fail('Failed to create org');
-        console.log(chalk.red(`\n  ${body.error || res.statusText}\n`));
+        console.error(chalk.red(`\n  ${body.error || res.statusText}\n`));
         process.exit(1);
       }
       const data = await res.json();
@@ -76,8 +76,8 @@ export async function authCommand(action) {
     await fs.writeJson(CONFIG_PATH, { token: key, org: orgSlug }, { spaces: 2 });
 
     spinner.succeed(chalk.green('Authenticated!'));
-    console.log(chalk.gray(`\n  Config saved to ${CONFIG_PATH}`));
-    console.log(chalk.yellow(`  Save your key somewhere safe — it won't be shown again.\n`));
+    console.error(chalk.gray(`\n  Config saved to ${CONFIG_PATH}`));
+    console.error(chalk.yellow(`  Save your key somewhere safe — it won't be shown again.\n`));
   } finally {
     rl.close();
   }

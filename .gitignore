@@ -8,3 +8,7 @@ out/
 
 # contextd remote cache
 .context/remote/
+
+# contextd exports
+CLAUDE.md.generated
+.cursorrules.generated

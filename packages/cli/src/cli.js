@@ -9,7 +9,7 @@ import { serveCommand } from './commands/serve.js';
 import { authCommand } from './commands/auth.js';
 import { syncCommand } from './commands/sync.js';
 
-console.log(chalk.cyan.bold('\n  contextd') + chalk.gray(' — the context layer for AI development\n'));
+console.error(chalk.cyan.bold('\n  contextd') + chalk.gray(' — the context layer for AI development\n'));
 
 program
   .name('contextd')
@@ -40,13 +40,12 @@ program
   .command('decision')
   .description('Manage architecture decision records (ADRs)')
   .argument('<action>', 'Action: add, list, view')
-  .argument('[title]', 'Decision title (for add)')
+  .argument('[title]', 'Decision title (for add) or number (for view)')
   .action(decisionCommand);
 
 program
   .command('serve')
-  .description('Start contextd as an MCP server')
-  .option('--port <port>', 'Port to serve on', '3333')
+  .description('Start contextd as an MCP server (stdio)')
   .action(serveCommand);
 
 program

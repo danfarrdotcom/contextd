@@ -16,19 +16,19 @@ export async function exportCommand(options) {
   const rootDir = await findRoot(process.cwd());
 
   if (!rootDir) {
-    console.log(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
+    console.error(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
     process.exit(1);
   }
 
   const format = options.format;
   if (!FORMATS[format]) {
-    console.log(chalk.red(`\n  ✗ Unknown format: ${format}`));
-    console.log(chalk.gray(`  Available: ${Object.keys(FORMATS).join(', ')}\n`));
+    console.error(chalk.red(`\n  ✗ Unknown format: ${format}`));
+    console.error(chalk.gray(`  Available: ${Object.keys(FORMATS).join(', ')}\n`));
     process.exit(1);
   }
 
   if (format === 'mcp') {
-    console.log(chalk.yellow('\n  For MCP, run: contextd serve\n'));
+    console.error(chalk.yellow('\n  For MCP, run: contextd serve\n'));
     return;
   }
 
@@ -47,7 +47,7 @@ export async function exportCommand(options) {
       return age > 7 * 24 * 60 * 60 * 1000;
     });
     if (veryStale.length) {
-      veryStale.forEach(s => console.log(chalk.yellow(`  ⚠ Remote context ${s.name} hasn't synced in over 7 days`)));
+      veryStale.forEach(s => console.error(chalk.yellow(`  ⚠ Remote context ${s.name} hasn't synced in over 7 days`)));
     }
 
     const remoteContexts = await loadRemoteContexts(rootDir);
@@ -77,7 +77,7 @@ export async function exportCommand(options) {
 
     const lines = output.split('\n').length;
     const chars = output.length;
-    console.log(chalk.gray(`\n  ${lines} lines · ${chars} chars · ${contexts.length} context files merged\n`));
+    console.error(chalk.gray(`\n  ${lines} lines · ${chars} chars · ${contexts.length} context files merged\n`));
 
   } catch (err) {
     spinner.fail('Export failed');

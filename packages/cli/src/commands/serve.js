@@ -6,7 +6,7 @@ export async function serveCommand(options) {
   const rootDir = await findRoot(process.cwd());
 
   if (!rootDir) {
-    console.log(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
+    console.error(chalk.red('\n  ✗ No .context/ directory found. Run contextd init first.\n'));
     process.exit(1);
   }
 
@@ -33,7 +33,7 @@ export async function serveCommand(options) {
     const transportModule = await import('@modelcontextprotocol/sdk/server/stdio.js');
     StdioServerTransport = transportModule.StdioServerTransport;
   } catch (e) {
-    console.log(chalk.red('\n  ✗ MCP SDK not available. Run: npm install @modelcontextprotocol/sdk\n'));
+    console.error(chalk.red('\n  ✗ MCP SDK not available. Run: npm install @modelcontextprotocol/sdk\n'));
     process.exit(1);
   }
 
