@@ -5,7 +5,7 @@ import ora from 'ora';
 import { createInterface } from 'readline/promises';
 
 const CONFIG_PATH = path.join(process.env.HOME || '~', '.contextd', 'config.json');
-const API_BASE = process.env.CONTEXTD_API_URL || 'https://contextd-worker.workers.dev/v1';
+const API_BASE = process.env.CONTEXTD_API_URL || 'https://contextd-worker.dan-farr6298.workers.dev/v1';
 
 export async function getToken() {
   if (!await fs.pathExists(CONFIG_PATH)) return null;

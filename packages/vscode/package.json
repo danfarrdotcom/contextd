@@ -5,7 +5,6 @@
   "version": "0.1.0",
   "publisher": "DanFarr",
   "repository": {"type": "git", "url": "https://github.com/danfarrdotcom/contextd"},
-  "private": true,
   "engines": {
     "vscode": "^1.85.0"
   },

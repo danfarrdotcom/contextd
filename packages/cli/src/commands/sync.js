@@ -158,7 +158,7 @@ async function syncPublish(rootDir, options) {
   }
 
   const [org, collection] = targetName.split('/');
-  const apiBase = process.env.CONTEXTD_API_URL || 'https://contextd-worker.workers.dev/v1';
+  const apiBase = process.env.CONTEXTD_API_URL || 'https://contextd-worker.dan-farr6298.workers.dev/v1';
   const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
   const toPublish = ctx.all.filter(c => !c.path.includes('/remote/'));

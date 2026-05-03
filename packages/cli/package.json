@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "The context layer for AI-assisted development",
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/cli.js",
   "bin": {
     "contextd": "./src/cli.js"
   },
