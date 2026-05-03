@@ -8,22 +8,22 @@
 npx contextd serve
 ```
 
-The server runs over stdio by default. It requires `@modelcontextprotocol/sdk` to be installed.
+The server runs over **stdio transport** (not HTTP), which is the standard for MCP. It requires `@modelcontextprotocol/sdk` to be installed.
 
 ### Options
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--port <port>` | `3333` | Port to serve on |
+| `--port <port>` | `3333` | Port to serve on (for future HTTP support) |
 
 ## Available tools
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
-| `get_project_overview` | Get a high-level overview of the project | None |
-| `get_conventions` | Get coding conventions and standards for this project | None |
-| `get_relevant_context` | Get context relevant to specific files or areas of the codebase | `files` — list of file paths |
-| `list_decisions` | List all architecture decisions (ADRs) | None |
+| `get_project_overview` | Get high-level project overview + architecture | None |
+| `get_conventions` | Get coding conventions and standards | None |
+| `get_relevant_context` | Get context relevant to specific files | `files` — array of file paths |
+| `list_decisions` | List all architecture decision records (ADRs) | None |
 | `get_module_context` | Get context for a specific module or directory | `module` — module name or path |
 
 ## Configuring Claude Code
@@ -58,4 +58,23 @@ Add the server to Cursor's MCP settings:
 
 ## How it works
 
-When a tool is called, the MCP server reads from your `.context/` directory and returns the relevant content as structured text. The `get_relevant_context` tool automatically matches your requested files against module scopes to find the most relevant context files.
+When the server starts, it:
+
+1. Finds the project root (directory containing `.context/`)
+2. Auto-refreshes stale remote sources (>24 hours old) non-blocking
+3. Warns if any source hasn't synced in >7 days
+4. Registers all 5 MCP tools
+5. Connects via stdio transport
+6. Prints the MCP configuration JSON to stderr for you to add to your `.mcp.json`
+
+### Remote context inclusion
+
+All MCP tools automatically include remote contexts if configured. When you call `get_relevant_context`, the server matches files against both local and cached remote module scopes.
+
+### Tool behavior
+
+- **`get_project_overview`** — Merges `project.md` and `architecture.md` content
+- **`get_conventions`** — Returns `conventions.md` content
+- **`get_relevant_context`** — Uses the same relevance algorithm as `export --files`: always includes project + conventions, adds matching modules by scope, and relevant decisions by tags
+- **`list_decisions`** — Lists all ADRs with titles and statuses
+- **`get_module_context`** — Finds a module context file by name or path and returns its content

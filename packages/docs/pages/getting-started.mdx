@@ -26,16 +26,22 @@ This creates a `.context/` directory with starter templates:
 
 ```
 .context/
-  project.md       ← Project overview and goals
+  project.md       ← Project overview, goals, and tech stack
   architecture.md  ← System architecture and data flow
-  conventions.md   ← Coding conventions and patterns
+  conventions.md   ← Coding standards and patterns
   decisions/       ← Architecture decision records (ADRs)
   modules/         ← Module-specific context files
 ```
 
+For a minimal setup with only `project.md`:
+
+```bash
+contextd init --minimal
+```
+
 ## Edit your context files
 
-Open each `.md` file and fill in the details about your project. The frontmatter at the top of each file is used for metadata and can be left as-is initially.
+Open each `.md` file and fill in the details about your project. The frontmatter at the top of each file provides metadata:
 
 ```markdown
 ---
@@ -79,9 +85,48 @@ Validate that your context files are complete and well-formed:
 contextd check
 ```
 
+This checks for missing core files, empty templates, stale content, and module coverage gaps.
+
+## Set up remote sync (optional)
+
+For team context sharing, authenticate and subscribe to shared collections:
+
+```bash
+# Authenticate with the remote service
+contextd auth login
+
+# Subscribe to a shared context collection
+contextd sync add contextd://my-org/shared
+
+# Fetch remote contexts
+contextd sync now
+
+# Publish your local contexts to the remote
+contextd sync publish
+```
+
+Remote contexts are automatically merged into exports, with local files taking precedence. See [Remote Sync](/remote-sync) for details.
+
+## Set up the MCP server (optional)
+
+Run contextd as an MCP server so AI agents can query context programmatically:
+
+```bash
+contextd serve
+```
+
+This prints an `.mcp.json` configuration to add to your project. See the [MCP Server](/mcp-server) guide for details.
+
+## Install the VS Code extension (optional)
+
+Install the `contextd` extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=contextd) for a visual interface to manage context, view health scores, and export with one click.
+
+See the [VS Code Extension](/vscode-extension) guide for details.
+
 ## What's next
 
 - Learn about each [CLI command](/cli/export)
 - Set up the [MCP server](/mcp-server) for real-time context
 - Install the [VS Code extension](/vscode-extension)
 - Understand the [context file format](/context-files)
+- Set up [remote sync](/remote-sync) for team sharing

@@ -1,0 +1,61 @@
+# contextd auth
+
+Authenticate with the contextd remote service for team context sharing.
+
+## Usage
+
+```bash
+contextd auth <action>
+```
+
+## Actions
+
+### `login`
+
+Authenticate and save credentials to `~/.contextd/config.json`.
+
+```bash
+contextd auth login
+```
+
+You'll be prompted for:
+
+1. **Org slug** — Your organization identifier (e.g., `acme`)
+2. **Key name** — A label for this device/session (e.g., `laptop`)
+3. **Existing API key** — Leave blank to create a new org, or provide an existing key to add a new key to an existing org
+
+**Creating a new org:** Leave the API key blank. A new organization and API key will be created.
+
+**Adding a key to an existing org:** Provide an existing API key. A new key will be added under your org name.
+
+After authentication, your credentials are saved:
+
+```json
+{
+  "token": "ctxd_...",
+  "org": "acme"
+}
+```
+
+### `logout`
+
+Remove saved credentials:
+
+```bash
+contextd auth logout
+```
+
+This deletes `~/.contextd/config.json`.
+
+## Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CONTEXTD_API_URL` | `https://contextd-worker.workers.dev/v1` | Override the API base URL (for self-hosted instances) |
+
+## Next steps
+
+After authenticating, you can:
+
+- Subscribe to shared collections with [`sync add`](/cli/sync)
+- Publish your local contexts with [`sync publish`](/cli/sync)

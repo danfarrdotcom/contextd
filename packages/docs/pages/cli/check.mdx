@@ -12,25 +12,45 @@ contextd check [options]
 
 | Flag | Description |
 |------|-------------|
-| `--fix` | Auto-fix simple issues (e.g. missing frontmatter, empty sections) |
+| `--fix` | Auto-fix simple issues |
 
 ## What it checks
 
-The `check` command validates:
+### Core file checks
 
-- **Required files exist** — `project.md`, `architecture.md`, `conventions.md` should be present
-- **Frontmatter is valid** — Each file has parseable YAML frontmatter
-- **Content is not empty** — Files have more than just the template scaffolding
-- **Decisions are numbered** — ADR files follow the `NNN-slug.md` naming pattern
-- **Module scopes are valid** — Module context files reference real directories
+- `project.md` — Required. Error if missing.
+- `architecture.md` — Recommended for larger projects. Warning if missing.
+- `conventions.md` — Helps AI follow coding style. Warning if missing.
+
+### Content quality checks
+
+- **Empty files** — Warns if a file's content is less than 50 characters or contains only comments/headers
+- **Stale files** — Warns if a file has no `updated` date or the date is more than 3 months old
+
+### Decision records
+
+- Counts the number of ADRs recorded
+- Warns if no decisions have been recorded
+
+### Module coverage
+
+Checks your source directories for modules that lack context files:
+
+- Scanned directories: `src`, `app`, `lib`, `packages`, `services`, `api`, `components`
+- Warns if subdirectories exist without corresponding module context in `.context/modules/`
+- Checks up to 8 source directories, max 5 subdirectories per top-level directory
 
 ## Example output
 
 ```
 Checking context health...
-  project.md      OK
-  architecture.md OK
-  conventions.md  WARNING - empty section "Testing"
-  decisions/      OK (3 ADRs)
-  modules/        OK (2 modules)
+  ✓ project.md
+  ✓ architecture.md
+  ⚠ conventions.md - empty section "Testing"
+  ✓ decisions/ (3 ADRs)
+  ⚠ modules/ - 2 directories without context
 ```
+
+## Auto-fix
+
+With `--fix`, contextd attempts to auto-fix simple issues like missing frontmatter or empty sections.

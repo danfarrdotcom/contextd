@@ -1,0 +1,127 @@
+# Remote Sync
+
+contextd supports team context sharing through a remote service. Subscribe to shared context collections, publish your own, and keep everything in sync with delta updates.
+
+## Architecture
+
+The remote service is a Cloudflare Worker backed by D1 (metadata) and KV (context content). It supports:
+
+- **Organizations** — Multi-user teams with API key auth
+- **Collections** — Grouped sets of contexts (public or private)
+- **Delta sync** — Only fetch contexts updated since last sync
+- **Self-hosting** — Run your own worker instance
+
+## How it works
+
+### Subscribing to a collection
+
+```bash
+# Add a remote source
+contextd sync add contextd://my-org/shared
+
+# Fetch contexts
+contextd sync now
+```
+
+Contexts are cached in `.context/remote/{org}/{collection}/` and automatically merged into exports and MCP responses. Local files take precedence on slug conflicts.
+
+### Publishing your contexts
+
+```bash
+# Authenticate first
+contextd auth login
+
+# Publish all local contexts
+contextd sync publish
+```
+
+Publishing sends your `project.md`, `architecture.md`, `conventions.md`, ADRs, and module contexts to the remote collection.
+
+### Filtering
+
+You can subscribe to only specific types or tagged contexts:
+
+```bash
+# Only conventions from this collection
+contextd sync add contextd://my-org/shared --type conventions
+
+# Only backend-tagged contexts
+contextd sync add contextd://my-org/shared --tags backend
+```
+
+## Context types
+
+The remote service recognizes these context types:
+
+| Type | Description | Source path |
+|------|-------------|-------------|
+| `project` | Project overview | `project.md` |
+| `architecture` | System design | `architecture.md` |
+| `conventions` | Coding standards | `conventions.md` |
+| `decision` | Architecture decision record | `decisions/*.md` |
+| `module` | Module-specific context | `modules/*.md` |
+
+## Self-hosting
+
+You can run your own contextd worker instance. Set the `CONTEXTD_API_URL` environment variable:
+
+```bash
+export CONTEXTD_API_URL=https://my-worker.example.com/v1
+```
+
+All CLI commands (`auth`, `sync`, and auto-refresh during `export`/`serve`) will use this URL instead of the default service.
+
+## API reference
+
+The remote service exposes these endpoints:
+
+### Organizations
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/orgs` | Create new org + API key |
+| `POST` | `/orgs/:org/keys` | Add API key to org (Bearer auth) |
+| `DELETE` | `/orgs/:org/keys/:id` | Remove API key (Bearer auth) |
+
+### Collections
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/orgs/:org/collections` | Create collection (Bearer auth) |
+| `GET` | `/:org/:collection` | Get collection info (public if `is_public`) |
+| `PATCH` | `/orgs/:org/:collection` | Update collection (Bearer auth) |
+| `DELETE` | `/orgs/:org/:collection` | Delete collection (Bearer auth) |
+
+### Contexts
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/orgs/:org/:collection/contexts` | Create/update context (Bearer auth) |
+| `GET` | `/:org/:collection/contexts` | List contexts (with `?type=` and `?tags=` filters) |
+| `GET` | `/:org/:collection/contexts/:slug` | Get specific context + content |
+| `DELETE` | `/orgs/:org/:collection/contexts/:slug` | Delete context (Bearer auth) |
+| `GET` | `/:org/:collection/sync` | Delta sync (`?since=` timestamp) |
+
+## Workflow example
+
+```bash
+# 1. Create an org and authenticate
+contextd auth login
+# → Enter org slug: my-org
+# → Enter key name: laptop
+# → Leave API key blank (creates new org)
+
+# 2. Add your first source (your own collection)
+contextd sync add contextd://my-org/team-contexts
+
+# 3. Publish your local contexts
+contextd sync publish
+
+# 4. On another machine, subscribe and pull
+contextd auth login
+# → Enter org slug: my-org
+# → Enter the API key from step 1
+
+contextd sync add contextd://my-org/team-contexts
+contextd sync now
+```

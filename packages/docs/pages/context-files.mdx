@@ -6,15 +6,20 @@
 
 ```
 .context/
-├── project.md          # High-level project overview
-├── architecture.md     # System architecture and design
-├── conventions.md      # Coding standards and patterns
-├── decisions/          # Architecture decision records (ADRs)
+├── project.md          # Required: project overview
+├── architecture.md     # Recommended: system design
+├── conventions.md      # Recommended: coding standards
+├── decisions/          # Architecture Decision Records (ADRs)
 │   ├── 001-why-typescript.md
 │   └── 002-api-design.md
-└── modules/            # Module-specific context
-    ├── api.md
-    └── ui.md
+├── modules/            # Per-directory/module context
+│   ├── api.md          # scope: src/api
+│   └── ui.md           # scope: src/components
+├── remote/             # Cached remote contexts (gitignored)
+│   └── org/
+│       └── collection/
+│           └── *.md
+└── sources.json        # Remote source configuration
 ```
 
 ## Root-level files
@@ -52,11 +57,23 @@ Coding standards and patterns the team follows:
 The `decisions/` directory contains Architecture Decision Records (ADRs). Each file follows the naming pattern `NNN-slug.md` and contains:
 
 - Title and date
-- Status (proposed, accepted, deprecated)
+- Status (`proposed`, `accepted`, `deprecated`)
 - Context describing the issue
 - The decision made
 - Consequences
 - Alternatives considered
+
+Create new ADRs with:
+
+```bash
+contextd decision add "Why we use tRPC"
+```
+
+List all decisions with:
+
+```bash
+contextd decision list
+```
 
 ## Modules
 
@@ -66,22 +83,74 @@ The `modules/` directory contains context for specific directories or areas of y
 - Key patterns used
 - Gotchas, rules, or conventions specific to that area
 
-Module files should be named after the directory they cover (e.g., `api.md` for the `api/` directory) and include a `scope` field in the frontmatter.
+Module files should be named after the directory they cover (e.g., `api.md` for the `src/api/` directory) and include a `scope` field in the frontmatter.
+
+## Remote contexts
+
+The `remote/` directory caches contexts synced from remote collections. These files are merged into exports and MCP responses alongside local contexts, with local files taking precedence on conflicts. The directory is gitignored — it's populated by `contextd sync now`.
+
+## Sources configuration
+
+`.context/sources.json` tracks which remote collections you subscribe to:
+
+```json
+{
+  "sources": [
+    {
+      "name": "my-org/shared",
+      "url": "contextd://my-org/shared",
+      "filters": { "type": "conventions", "tags": ["backend"] },
+      "last_synced": "2026-05-03T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+Manage sources with the [`sync`](/cli/sync) command.
 
 ## File format
 
-All context files use Markdown with YAML frontmatter:
+All context files use Markdown with YAML frontmatter.
+
+### Core fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | `string` | Yes | Display title |
+| `updated` | `string` | Yes | ISO date (`YYYY-MM-DD`) |
+
+### Optional fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tags` | `string[]` | Tags for filtering (used by decisions and sync filters) |
+| `priority` | `string` | Priority level: `high`, `medium`, `low`, `normal` |
+| `scope` | `string` | Directory scope for module contexts (e.g., `src/api`) |
+
+### Decision-specific fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | `string` | `accepted`, `deprecated`, or `proposed` |
+| `date` | `string` | Creation date (`YYYY-MM-DD`) |
+
+### Example: core context file
 
 ```markdown
 ---
 title: Project Overview
 updated: 2026-05-03
+tags: [backend, api]
+priority: high
 ---
 
-# Content here
+# Project Overview
+
+## What is this?
+...
 ```
 
-Decision files include additional frontmatter fields:
+### Example: decision file
 
 ```markdown
 ---
@@ -90,14 +159,23 @@ date: 2026-05-03
 status: accepted
 tags: ["api", "architecture"]
 ---
+
+# ADR-001: Why we use tRPC instead of REST
+
+## Context
+...
 ```
 
-Module context files include a `scope` field:
+### Example: module context file
 
 ```markdown
 ---
 title: API Module
-scope: api
+scope: src/api
 updated: 2026-05-03
 ---
+
+# API Module
+
+...
 ```

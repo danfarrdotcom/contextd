@@ -2,7 +2,7 @@
 
 The context layer for AI-assisted development.
 
-contextd helps you maintain structured, machine-readable project context so AI coding assistants (Claude, Cursor, Copilot) understand your codebase deeply and consistently.
+contextd helps you maintain structured, machine-readable project context so AI coding assistants (Claude Code, Cursor, GitHub Copilot) understand your codebase deeply and consistently.
 
 ---
 
@@ -10,9 +10,26 @@ contextd helps you maintain structured, machine-readable project context so AI c
 
 - **Structured context files** — Store project overview, architecture, conventions, and module-specific knowledge in a standardized `.context/` folder
 - **AI-ready exports** — Export your context to `CLAUDE.md`, `.cursorrules`, or raw text so AI tools can consume it
-- **Architecture decision records** — Track why you made key decisions with ADRs
-- **MCP server** — Run contextd as an [MCP server](/mcp-server) for real-time context queries
-- **VS Code extension** — Manage context directly from your editor
+- **Architecture decision records** — Track why you made key decisions with sequentially-numbered ADRs
+- **Health checking** — Validate context completeness, find stale files, and identify coverage gaps
+- **MCP server** — Run contextd as an [MCP server](/mcp-server) for real-time context queries from AI agents
+- **VS Code extension** — Manage context visually from your editor with a sidebar, health dashboard, and right-click actions
+- **Remote sync** — Subscribe to shared context collections and publish your own, with delta sync and filtering
+- **Multi-org auth** — Authenticate with the remote service to enable team context sharing
+
+---
+
+## CLI commands
+
+| Command | Description |
+|---------|-------------|
+| [`init`](/cli/init) | Scaffold `.context/` directory with templates |
+| [`export`](/cli/export) | Export context to CLAUDE.md, .cursorrules, or raw |
+| [`check`](/cli/check) | Validate context health and find gaps |
+| [`decision`](/cli/decision) | Create and list architecture decision records |
+| [`serve`](/cli/serve) | Start as an MCP server |
+| [`auth`](/cli/auth) | Authenticate with remote service |
+| [`sync`](/cli/sync) | Subscribe to and publish remote contexts |
 
 ---
 

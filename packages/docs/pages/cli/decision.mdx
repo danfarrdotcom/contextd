@@ -12,13 +12,13 @@ contextd decision <action> [title]
 
 ### `add`
 
-Create a new ADR:
+Create a new ADR with a sequential number and pre-filled template:
 
 ```bash
 contextd decision add "Why we use tRPC instead of REST"
 ```
 
-This creates a file in `.context/decisions/` with the next sequential number (e.g. `004-why-we-use-trpc-instead-of-rest.md`) and pre-filled ADR template:
+This creates a file in `.context/decisions/` with the next sequential number (e.g., `004-why-we-use-trpc-instead-of-rest.md`):
 
 ```markdown
 ---
@@ -31,29 +31,27 @@ tags: []
 # ADR-004: Why we use tRPC instead of REST
 
 ## Context
-What is the issue that is motivating this decision?
+What is the issue that we're seeing that is motivating this decision or change?
 
 ## Decision
-What are we doing?
+What is the change that we're proposing and/or doing?
 
 ## Consequences
-What becomes easier or harder?
+What becomes easier or more difficult because of this change?
 
 ## Alternatives Considered
+What other options did we evaluate?
 ```
 
 ### `list`
 
-List all existing ADRs:
+List all existing ADRs with their numbers, titles, and statuses:
 
 ```bash
 contextd decision list
 ```
 
-### `view`
-
-View a specific ADR by number or slug:
-
-```bash
-contextd decision view 004
-```
+Output is color-coded by status:
+- Green: `accepted`
+- Red: `deprecated`
+- Yellow: other statuses (e.g., `proposed`)

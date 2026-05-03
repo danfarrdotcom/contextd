@@ -1,0 +1,134 @@
+# contextd sync
+
+Manage remote context sources — subscribe to shared collections and publish your own.
+
+## Usage
+
+```bash
+contextd sync <action> [args...] [options]
+```
+
+## Actions
+
+### `add`
+
+Subscribe to a remote context collection:
+
+```bash
+contextd sync add contextd://my-org/shared
+```
+
+**Supported URL formats:**
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| `contextd://` | `contextd://org/collection` | Default service URL |
+| `https://` | `https://my-worker.example.com/v1/org/collection` | Self-hosted |
+
+**Filtering:**
+
+You can filter which contexts to sync by type and tags:
+
+```bash
+# Filter by type
+contextd sync add contextd://my-org/shared --type conventions
+
+# Filter by tags
+contextd sync add contextd://my-org/shared --tags backend,api
+
+# Combine filters
+contextd sync add contextd://my-org/shared --type conventions --tags backend
+
+# Filters in URL
+contextd sync add "contextd://my-org/shared?type=module&tags=api"
+```
+
+Filters are saved to `.context/sources.json` and applied on every sync.
+
+### `remove`
+
+Remove a subscribed source:
+
+```bash
+contextd sync remove my-org/shared
+```
+
+The source name is in `org/collection` format.
+
+### `list`
+
+List all configured remote sources:
+
+```bash
+contextd sync list
+```
+
+Shows each source's name, last synced date, and any active filters.
+
+### `now`
+
+Fetch contexts from all configured sources:
+
+```bash
+contextd sync now
+```
+
+For each source:
+1. Parses the source URL
+2. Calls `GET /{org}/{collection}/sync?since={last_synced}` on the remote API
+3. On first sync, clears the cache directory
+4. Writes contexts to `.context/remote/{org}/{collection}/{slug}.md`
+5. Updates the `last_synced` timestamp
+
+Contexts are downloaded as delta syncs — only contexts updated since the last sync are fetched.
+
+### `publish`
+
+Push your local contexts to a remote collection:
+
+```bash
+contextd sync publish
+```
+
+Requires authentication (`contextd auth login`). Publishes all local contexts (excludes `.context/remote/`).
+
+Context types are inferred from file paths:
+- `/decisions/` → `decision`
+- `/modules/` → `module`
+- Other → `context`
+
+**Options:**
+
+| Option | Description |
+|--------|-------------|
+| `--target <target>` | Target org/collection (defaults to first configured source) |
+| `--dry-run` | Preview what would be pushed without actually pushing |
+
+```bash
+# Publish to a specific target
+contextd sync publish --target my-org/shared
+
+# Preview without pushing
+contextd sync publish --dry-run
+```
+
+## Sources configuration
+
+Subscriptions are stored in `.context/sources.json`:
+
+```json
+{
+  "sources": [
+    {
+      "name": "my-org/shared",
+      "url": "contextd://my-org/shared",
+      "filters": { "type": "conventions", "tags": ["backend"] },
+      "last_synced": "2026-05-03T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+## Auto-refresh
+
+When you run `export` or `serve`, contextd automatically refreshes any remote sources that haven't synced in over 24 hours (non-blocking). Sources older than 7 days trigger a warning.

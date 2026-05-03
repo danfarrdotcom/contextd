@@ -1,0 +1,50 @@
+# contextd init
+
+Initialize contextd in the current project by scaffolding the `.context/` directory.
+
+## Usage
+
+```bash
+contextd init [options]
+```
+
+## Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--minimal` | Create only `project.md` (minimal setup) | `false` |
+
+## Full initialization
+
+```bash
+contextd init
+```
+
+Creates the complete directory structure with template files:
+
+```
+.context/
+  project.md       ← Project overview with tech stack, goals, what to avoid
+  architecture.md  ← System structure, directory layout, data flow
+  conventions.md   ← Coding standards, naming, patterns
+  decisions/
+    001-example.md ← Example ADR template
+  modules/
+    .gitkeep       ← Placeholder for module contexts
+```
+
+Also adds generated export files to `.gitignore`:
+- `CLAUDE.md.generated`
+- `.cursorrules.generated`
+
+## Minimal initialization
+
+```bash
+contextd init --minimal
+```
+
+Creates only `.context/project.md` — useful for quick setups or when you want to build out the structure manually.
+
+## Already initialized
+
+If `.context/` already exists in the current or any parent directory, `init` will display a warning with the existing path and exit without making changes.

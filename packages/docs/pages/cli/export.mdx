@@ -12,7 +12,7 @@ contextd export [options]
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--format <format>` | Output format: `claude-md`, `cursorrules`, `mcp`, `raw` | `claude-md` |
+| `--format <format>` | Output format: `claude-md`, `cursorrules`, `raw` | `claude-md` |
 | `--output <path>` | Output file path (defaults to format standard) | — |
 | `--files <files>` | Comma-separated list of files to get context for | — |
 
@@ -36,14 +36,6 @@ contextd export --format cursorrules
 # Writes to .cursorrules
 ```
 
-### `mcp`
-
-Outputs JSON suitable for MCP (Model Context Protocol) server consumption.
-
-```bash
-contextd export --format mcp
-```
-
 ### `raw`
 
 Prints all context to stdout. Useful for piping into other commands or manual inspection.
@@ -52,10 +44,27 @@ Prints all context to stdout. Useful for piping into other commands or manual in
 contextd export --format raw
 ```
 
+## How it works
+
+1. Finds the project root (directory containing `.context/`)
+2. Auto-refreshes stale remote sources (>24 hours old) non-blocking
+3. Warns if any remote source hasn't synced in >7 days
+4. Loads remote contexts from `.context/remote/`
+5. If `--files` is provided, uses relevance matching (project + conventions + matching modules + tagged decisions)
+6. Merges local and remote contexts (local takes precedence on slug conflicts)
+7. Builds output ordered: project → architecture → conventions → modules → decisions
+8. Writes to file with a metadata header showing generation timestamp
+
 ## Targeting specific files
 
-When you pass `--files`, contextd exports only the context relevant to those files (matching against module scopes and project context):
+When you pass `--files`, contextd exports only the context relevant to those files:
 
 ```bash
 contextd export --files src/api/routes.ts,src/db/schema.ts
 ```
+
+Relevance matching includes:
+- `project.md` and `conventions.md` (always)
+- `architecture.md` (if files specified)
+- Modules whose `scope` matches the file paths
+- Decisions tagged with relevant keywords

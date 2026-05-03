@@ -12,7 +12,7 @@ contextd export --format claude-md
 
 Exports to `CLAUDE.md` in your project root. This file is automatically picked up by [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview#understanding-claudes-project-context) and included in every conversation.
 
-The output combines all context files (project overview, architecture, conventions, modules, and decisions) into a single Markdown document.
+The output combines all context files (project overview, architecture, conventions, modules, and decisions) into a single Markdown document, ordered: project → architecture → conventions → modules → decisions.
 
 ### .cursorrules
 
@@ -34,9 +34,33 @@ Prints the combined context to stdout. Useful for piping into other tools or cop
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--format <format>` | `claude-md` | Output format: `claude-md`, `cursorrules`, `mcp`, `raw` |
+| `--format <format>` | `claude-md` | Output format: `claude-md`, `cursorrules`, `raw` |
 | `--output <path>` | (format standard) | Custom output file path |
 | `--files <files>` | (all) | Comma-separated list of specific files to include |
+
+## How exports work
+
+### Remote context merging
+
+When you export, contextd automatically:
+
+1. **Auto-refreshes stale remote sources** — If any remote source hasn't been synced in over 24 hours, it's refreshed before export (non-blocking)
+2. **Warns on very stale sources** — If a source hasn't synced in over 7 days, a warning is displayed
+3. **Loads remote contexts** — Reads cached files from `.context/remote/`
+4. **Merges local and remote** — Local contexts take precedence on slug conflicts
+
+### File-relevant exports
+
+When you pass `--files`, contextd uses relevance matching to include only context that applies to the specified files:
+
+- Always includes `project.md` and `conventions.md`
+- Includes `architecture.md` if files are specified
+- Includes modules whose `scope` matches the file paths
+- Includes decisions tagged with relevant keywords
+
+```bash
+contextd export --files src/api/routes.ts,src/db/schema.ts
+```
 
 ## Examples
 

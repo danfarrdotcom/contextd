@@ -6,31 +6,50 @@ The `contextd` VS Code extension provides a visual interface for managing your p
 
 Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=contextd).
 
+The extension activates automatically when a `.context/project.md` file exists in your workspace, or when you run any contextd command.
+
 ## Features
 
 ### Context Tree View
 
-Browse all your context files in a dedicated sidebar view. Click any file to open and edit it directly.
+A dedicated sidebar view (`contextd.contextTree`) showing all your context files organized into sections:
 
-### Health View
+- **Core** — `project.md`, `architecture.md`, `conventions.md` (expanded by default)
+- **Decisions** — All ADRs with `ADR-XXX` labels
+- **Modules** — Module context files grouped by scope
 
-See the status of your context files at a glance. The health view highlights missing files, outdated content, and structural issues.
+Click any file to open and edit it directly. Stale or unfilled files are marked with a warning icon.
+
+### Health Dashboard
+
+A webview panel (`contextd.healthView`) showing:
+
+- **Health Score** (0–100%): color-coded green (≥80%), yellow (≥50%), or red ({"<"}50%)
+- **Statistics**: passed checks, warnings, errors, total files
+- **Checks List**: all health checks with status icons
 
 ### Status Bar Indicator
 
-A `$` icon in the status bar shows whether `contextd` is initialized in your workspace. Click it to run a health check.
+Shows `contextd` in the status bar when initialized. Click it to run a health check.
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `contextd: Initialize` | Create a `.context/` directory with template files |
-| `contextd: Export` | Export context to CLAUDE.md, .cursorrules, or copy raw output to clipboard |
-| `contextd: Check Health` | Run a health check and show results in the Health View |
-| `contextd: Add Architecture Decision` | Create a new ADR with a pre-filled template |
-| `contextd: Add Module Context` | Create module context for the current file's directory |
-| `contextd: Copy Context for File` | Copy all context relevant to the active file to clipboard |
-| `contextd: Refresh` | Refresh the context tree and health views |
+| Command | Title | Description |
+|---------|-------|-------------|
+| `contextd.init` | Initialize in this project | Scaffold `.context/` directory with templates |
+| `contextd.export` | Export context | Export to CLAUDE.md, .cursorrules, or copy raw output to clipboard |
+| `contextd.check` | Check context health | Run a health check and show results in the Health Dashboard |
+| `contextd.addDecision` | Add architecture decision (ADR) | Create a new ADR with a pre-filled template |
+| `contextd.addModuleContext` | Add module context for current file | Create module context scoped to the current file's directory |
+| `contextd.copyContextForFile` | Copy relevant context to clipboard | Copy all context relevant to the active file |
+| `contextd.refreshTree` | Refresh | Refresh the context tree and health views |
+
+### Editor Context Menu
+
+Right-click any file in the editor to access:
+
+- **contextd: Copy relevant context to clipboard** — copies context relevant to that file
+- **contextd: Add module context for current file** — creates a module context scoped to that file's directory
 
 ### Auto-Export
 
@@ -38,12 +57,12 @@ Enable `contextd.autoExportOnSave` in your settings to automatically regenerate 
 
 ### Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `contextd.defaultExportFormat` | `claude-md` | Default format for exports |
-| `contextd.autoExportOnSave` | `false` | Auto-regenerate export files on context file save |
-| `contextd.showStatusBar` | `true` | Show the status bar indicator |
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `contextd.defaultExportFormat` | `string` | `claude-md` | Default format for exports (`claude-md`, `cursorrules`, `raw`) |
+| `contextd.autoExportOnSave` | `boolean` | `false` | Auto-regenerate export files on context file save |
+| `contextd.showStatusBar` | `boolean` | `true` | Show the status bar indicator |
 
 ### File Watching
 
-The extension watches `.context/**/*.md` for changes and automatically refreshes the tree and health views when files are created, modified, or deleted.
+The extension watches `.context/**/*.md` for changes and automatically refreshes the tree and health views when files are created, modified, or deleted. On file creation, it also triggers auto-export if enabled.

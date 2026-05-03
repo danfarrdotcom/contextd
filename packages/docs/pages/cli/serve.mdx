@@ -16,26 +16,43 @@ contextd serve [options]
 
 ## What it does
 
-Running `contextd serve` starts an MCP server that exposes your project context as tools that AI assistants can call:
+Running `contextd serve` starts an MCP server over **stdio transport** that exposes your project context as tools AI assistants can call:
 
-- **get_context** — Retrieve all project context
-- **get_file_context** — Get context relevant to a specific file
-- **list_decisions** — List architecture decision records
-- **get_decision** — View a specific ADR
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `get_project_overview` | Get high-level project overview + architecture | None |
+| `get_conventions` | Get coding conventions and standards | None |
+| `get_relevant_context` | Get context relevant to specific files | `files` — array of file paths |
+| `list_decisions` | List all architecture decision records | None |
+| `get_module_context` | Get context for a specific module | `module` — module name or path |
+
+### Startup behavior
+
+1. Finds the project root
+2. Auto-refreshes stale remote sources (>24 hours old) non-blocking
+3. Warns on very stale sources (>7 days)
+4. Dynamically imports `@modelcontextprotocol/sdk`
+5. Creates MCP server with name `contextd` and version `0.1.0`
+6. Connects via stdio transport
+7. Prints MCP configuration JSON to stderr
 
 ## MCP configuration
 
-To connect an MCP client, add this to your MCP config:
+The server prints this configuration to stderr when started:
 
 ```json
 {
   "mcpServers": {
     "contextd": {
-      "command": "contextd",
-      "args": ["serve", "--port", "3333"]
+      "command": "npx",
+      "args": ["contextd", "serve"]
     }
   }
 }
 ```
 
-See the [MCP Server](/mcp-server) page for more details.
+Add it to `.mcp.json` in your project root, or to your MCP client's settings.
+
+## Remote context inclusion
+
+All tools automatically include remote contexts if configured. When `get_relevant_context` is called, the server matches files against both local and cached remote module scopes.
