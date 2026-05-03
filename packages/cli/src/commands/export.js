@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
-import { findRoot, loadAllContext, getRelevantContext, buildExportOutput } from '@danfarrdotcom/core';
+import { findRoot, loadAllContext, getRelevantContext, buildExportOutput, loadRemoteContexts, mergeContexts, loadSourcesConfig, shouldAutoRefresh } from '@danfarrdotcom/core';
+import { syncNow } from './sync.js';
 
 const FORMATS = {
   'claude-md': { file: 'CLAUDE.md', label: 'CLAUDE.md (Claude Code)' },
@@ -34,13 +35,31 @@ export async function exportCommand(options) {
   const spinner = ora(`Exporting as ${FORMATS[format].label}...`).start();
 
   try {
+    // Auto-refresh stale remote sources in background
+    const config = await loadSourcesConfig(rootDir);
+    const stale = config.sources.filter(shouldAutoRefresh);
+    if (stale.length) await syncNow(rootDir, { silent: true }).catch(() => {});
+
+    // Warn if any source hasn't synced in >7 days
+    const veryStale = config.sources.filter(s => {
+      if (!s.last_synced) return false;
+      const age = Date.now() - new Date(s.last_synced).getTime();
+      return age > 7 * 24 * 60 * 60 * 1000;
+    });
+    if (veryStale.length) {
+      veryStale.forEach(s => console.log(chalk.yellow(`  ⚠ Remote context ${s.name} hasn't synced in over 7 days`)));
+    }
+
+    const remoteContexts = await loadRemoteContexts(rootDir);
+
     let contexts;
     if (options.files) {
       const filePaths = options.files.split(',').map(f => f.trim());
       contexts = await getRelevantContext(rootDir, filePaths);
+      contexts = await mergeContexts(contexts, remoteContexts);
     } else {
       const ctx = await loadAllContext(rootDir);
-      contexts = ctx.all;
+      contexts = await mergeContexts(ctx.all, remoteContexts);
     }
 
     const output = buildExportOutput(contexts, format);

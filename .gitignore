@@ -5,3 +5,6 @@ out/
 *.vsix
 .env
 .DS_Store
+
+# contextd remote cache
+.context/remote/

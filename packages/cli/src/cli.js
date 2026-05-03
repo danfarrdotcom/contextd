@@ -6,6 +6,8 @@ import { exportCommand } from './commands/export.js';
 import { checkCommand } from './commands/check.js';
 import { decisionCommand } from './commands/decision.js';
 import { serveCommand } from './commands/serve.js';
+import { authCommand } from './commands/auth.js';
+import { syncCommand } from './commands/sync.js';
 
 console.log(chalk.cyan.bold('\n  contextd') + chalk.gray(' — the context layer for AI development\n'));
 
@@ -46,5 +48,22 @@ program
   .description('Start contextd as an MCP server')
   .option('--port <port>', 'Port to serve on', '3333')
   .action(serveCommand);
+
+program
+  .command('auth')
+  .description('Authenticate with contextd remote')
+  .argument('<action>', 'Action: login, logout')
+  .action(authCommand);
+
+program
+  .command('sync')
+  .description('Manage remote context sources')
+  .argument('<action>', 'Action: add, remove, list, now, publish')
+  .argument('[args...]', 'Additional arguments')
+  .option('--type <type>', 'Filter by context type (for sync add)')
+  .option('--tags <tags>', 'Comma-separated tag filter (for sync add)')
+  .option('--target <target>', 'Target org/collection (for sync publish)')
+  .option('--dry-run', 'Preview without pushing (for sync publish)')
+  .action(syncCommand);
 
 program.parse();

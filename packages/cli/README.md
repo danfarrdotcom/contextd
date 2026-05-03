@@ -6,9 +6,11 @@ Stop copy-pasting context into every AI conversation. Define your project's know
 
 ```bash
 npx contextd init
-npx contextd export       # → CLAUDE.md
-npx contextd export --format cursorrules  # → .cursorrules
-npx contextd serve        # → MCP server for Claude/Cursor
+npx contextd export                      # → CLAUDE.md
+npx contextd export --format cursorrules # → .cursorrules
+npx contextd serve                       # → MCP server for Claude/Cursor
+npx contextd auth login                  # → join or create a remote org
+npx contextd sync add contextd://org/collection  # → subscribe to shared context
 ```
 
 ---
@@ -132,6 +134,41 @@ Available MCP tools:
 - `list_decisions` — all ADRs
 - `get_module_context({ module })` — context for a specific area
 
+All tools automatically include remote contexts if you have any sources configured.
+
+---
+
+### `contextd auth`
+Authenticate with the contextd remote service.
+
+```bash
+contextd auth login    # create a new org or add a key to an existing one
+contextd auth logout   # remove saved credentials
+```
+
+Credentials are saved to `~/.contextd/config.json`.
+
+---
+
+### `contextd sync`
+Subscribe to shared context collections and publish your own.
+
+```bash
+# Subscribe
+contextd sync add contextd://org/collection
+contextd sync add contextd://org/collection --type conventions --tags backend
+contextd sync list
+contextd sync now                              # force refresh all sources
+contextd sync remove org/collection
+
+# Publish your local .context/ to a remote collection
+contextd sync publish
+contextd sync publish --target org/collection
+contextd sync publish --dry-run               # preview without pushing
+```
+
+Remote contexts are cached to `.context/remote/` (gitignored) and auto-refreshed when you run `export` or `serve` if the cache is older than 24 hours. **Local contexts always win** on slug conflicts.
+
 ---
 
 ## Module Context
@@ -169,16 +206,17 @@ You can — but contextd gives you:
 | Relevant-only context | All or nothing | `--files` flag |
 | Decision tracking | Separate doc | Built-in ADRs |
 | MCP integration | Manual | `contextd serve` |
+| Remote sharing | Not possible | `contextd sync` |
 
 ---
 
 ## Roadmap
 
+- [x] Remote sync — share context collections across repos and teams
 - [ ] Embeddings-based smart context selection
 - [ ] VS Code extension
 - [ ] GitHub Action for context drift detection
 - [ ] Context analytics (what's actually being read?)
-- [ ] Team sync via remote store
 
 ---
 
