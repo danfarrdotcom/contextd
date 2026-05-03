@@ -1,0 +1,17 @@
+name = "contextd-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "contextd"
+database_id = "9f78c859-7b72-416f-aa88-4932dca89f32"
+preview_database_id = "9f78c859-7b72-416f-aa88-4932dca89f32"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "4d5c1a537e3c401a8c4a5497aaebab72"
+
+[vars]
+ENVIRONMENT = "production"

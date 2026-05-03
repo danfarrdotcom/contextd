@@ -1,0 +1,25 @@
+{
+  "name": "@danfarrdotcom/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "test": "npx tsx --test 'test/middleware/**/*.test.ts'",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "echo 'no linter configured'"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.4.0",
+    "@cloudflare/workers-types": "^4.20240924.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0",
+    "wrangler": "^3.60.0"
+  }
+}

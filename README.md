@@ -78,6 +78,20 @@ contextd decision list
 
 # MCP server (Claude, Cursor, etc.)
 contextd serve
+
+# Remote sync
+contextd auth login                        # create or join an org
+contextd auth logout
+
+contextd sync add contextd://org/collection         # subscribe to a remote source
+contextd sync add contextd://org/collection --type conventions --tags backend
+contextd sync list                                  # show subscriptions + last-synced
+contextd sync now                                   # fetch latest from all sources
+contextd sync remove org/collection                 # unsubscribe
+
+contextd sync publish                               # push local contexts to remote
+contextd sync publish --target org/collection       # specify target
+contextd sync publish --dry-run                     # preview without pushing
 ```
 
 ### MCP server
@@ -94,6 +108,58 @@ contextd serve
 ```
 
 Available tools: `get_project_overview`, `get_conventions`, `get_relevant_context`, `list_decisions`, `get_module_context`
+
+---
+
+## Remote sync
+
+Share context collections across repos and teams — without copying files.
+
+```bash
+# Authenticate (creates a new org or joins an existing one)
+contextd auth login
+
+# Subscribe to a shared collection
+contextd sync add contextd://acme/eng
+
+# Fetch the latest contexts
+contextd sync now
+
+# Export now includes remote contexts alongside local ones
+contextd export
+```
+
+Remote contexts are cached to `.context/remote/<org>/<collection>/` (gitignored) and auto-refreshed whenever you run `export` or `serve` if the cache is older than 24 hours.
+
+**Local contexts always win** — if a remote slug matches a local file, the local version is used.
+
+### Publishing
+
+Push your local `.context/` files to a shared collection so teammates can subscribe:
+
+```bash
+contextd sync publish --target acme/eng
+```
+
+### URL schemes
+
+| URL | Resolves to |
+|---|---|
+| `contextd://acme/eng` | Hosted contextd service |
+| `https://my-worker.example.com/v1/acme/eng` | Self-hosted Worker |
+
+### Self-hosting
+
+The Worker source is in [`packages/worker`](packages/worker). Deploy your own with:
+
+```bash
+cd packages/worker
+npx wrangler d1 create contextd
+npx wrangler kv namespace create contextd
+npx wrangler deploy
+```
+
+Then set `CONTEXTD_API_URL=https://your-worker.workers.dev/v1` in your environment.
 
 ---
 
@@ -122,6 +188,7 @@ Features:
 | Relevant-only context | All or nothing | `--files` flag |
 | Decision tracking | Separate doc | Built-in ADRs |
 | MCP integration | Manual | `contextd serve` |
+| Remote sharing | Not possible | `contextd sync` |
 
 ---
 
