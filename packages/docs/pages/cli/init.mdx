@@ -33,6 +33,8 @@ Creates the complete directory structure with template files:
     .gitkeep       ← Placeholder for module contexts
 ```
 
+All template files include the current date in their `updated` frontmatter field. The example decision file (`001-example.md`) includes the current date in its `date` field.
+
 Also adds generated export files to `.gitignore`:
 - `CLAUDE.md.generated`
 - `.cursorrules.generated`
@@ -47,4 +49,4 @@ Creates only `.context/project.md` — useful for quick setups or when you want 
 
 ## Already initialized
 
-If `.context/` already exists in the current or any parent directory, `init` will display a warning with the existing path and exit without making changes.
+If `.context/` already exists in the current or any parent directory, `init` will display a warning with the existing path and exit without making changes. This means running `init` from a subdirectory of an existing contextd project will detect the parent's `.context/` and skip re-initialization.

@@ -12,7 +12,7 @@ contextd export [options]
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--format <format>` | Output format: `claude-md`, `cursorrules`, `raw` | `claude-md` |
+| `--format <format>` | Output format: `claude-md`, `cursorrules`, `raw`, `mcp` | `claude-md` |
 | `--output <path>` | Output file path (defaults to format standard) | — |
 | `--files <files>` | Comma-separated list of files to get context for | — |
 
@@ -42,6 +42,15 @@ Prints all context to stdout. Useful for piping into other commands or manual in
 
 ```bash
 contextd export --format raw
+```
+
+### `mcp`
+
+Prints a message to run `contextd serve` instead. The MCP server provides live context through the Model Context Protocol — use this if you want AI tools to query your context dynamically rather than as a static export.
+
+```bash
+contextd export --format mcp
+# → For MCP, run: contextd serve
 ```
 
 ## How it works

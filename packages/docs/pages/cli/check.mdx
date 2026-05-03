@@ -12,7 +12,7 @@ contextd check [options]
 
 | Flag | Description |
 |------|-------------|
-| `--fix` | Auto-fix simple issues |
+| `--fix` | Reserved for future auto-fix functionality (not yet implemented) |
 
 ## What it checks
 
@@ -43,14 +43,19 @@ Checks your source directories for modules that lack context files:
 ## Example output
 
 ```
-Checking context health...
-  ✓ project.md
-  ✓ architecture.md
-  ⚠ conventions.md - empty section "Testing"
-  ✓ decisions/ (3 ADRs)
-  ⚠ modules/ - 2 directories without context
+  Context Health Check
+
+  ✓ project.md exists
+  ✓ architecture.md exists
+  ✓ conventions.md exists
+  ⚠  decisions/001-example.md appears to be empty/unfilled
+  ⚠  conventions.md has no updated date or is > 3 months old
+  ⚠  src/api/ has no module context — consider adding .context/modules/api.md
+  ⚠  No architecture decisions recorded — consider adding ADRs
+
+  3 passed · 4 warnings · 0 errors
 ```
 
 ## Auto-fix
 
-With `--fix`, contextd attempts to auto-fix simple issues like missing frontmatter or empty sections.
+The `--fix` flag is reserved for future use. Auto-fix functionality is not yet implemented.

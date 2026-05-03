@@ -80,7 +80,7 @@ For each source:
 4. Writes contexts to `.context/remote/{org}/{collection}/{slug}.md`
 5. Updates the `last_synced` timestamp
 
-Contexts are downloaded as delta syncs — only contexts updated since the last sync are fetched.
+Contexts are downloaded as delta syncs — only contexts updated since the last sync are fetched. When local and remote contexts are merged (e.g., during `export`), deduplication is based on filename basename, so local contexts take precedence over remote ones with the same filename.
 
 ### `publish`
 
