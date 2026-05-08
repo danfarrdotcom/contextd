@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildExportOutput = exports.getContextStats = exports.getRelevantContext = exports.loadAllContext = exports.loadContextFile = exports.findRoot = exports.CONTEXT_DIR = void 0;
+exports.mergeContexts = exports.shouldAutoRefresh = exports.syncSource = exports.parseSourceUrl = exports.loadRemoteContexts = exports.writeSourcesConfig = exports.loadSourcesConfig = exports.SOURCES_FILE = exports.REMOTE_DIR = exports.buildExportOutput = exports.getContextStats = exports.getRelevantContext = exports.loadAllContext = exports.loadContextFile = exports.findRoot = exports.CONTEXT_DIR = void 0;
 var context_js_1 = require("./context.js");
 Object.defineProperty(exports, "CONTEXT_DIR", { enumerable: true, get: function () { return context_js_1.CONTEXT_DIR; } });
 Object.defineProperty(exports, "findRoot", { enumerable: true, get: function () { return context_js_1.findRoot; } });
@@ -9,4 +9,14 @@ Object.defineProperty(exports, "loadAllContext", { enumerable: true, get: functi
 Object.defineProperty(exports, "getRelevantContext", { enumerable: true, get: function () { return context_js_1.getRelevantContext; } });
 Object.defineProperty(exports, "getContextStats", { enumerable: true, get: function () { return context_js_1.getContextStats; } });
 Object.defineProperty(exports, "buildExportOutput", { enumerable: true, get: function () { return context_js_1.buildExportOutput; } });
+var remote_js_1 = require("./remote.js");
+Object.defineProperty(exports, "REMOTE_DIR", { enumerable: true, get: function () { return remote_js_1.REMOTE_DIR; } });
+Object.defineProperty(exports, "SOURCES_FILE", { enumerable: true, get: function () { return remote_js_1.SOURCES_FILE; } });
+Object.defineProperty(exports, "loadSourcesConfig", { enumerable: true, get: function () { return remote_js_1.loadSourcesConfig; } });
+Object.defineProperty(exports, "writeSourcesConfig", { enumerable: true, get: function () { return remote_js_1.writeSourcesConfig; } });
+Object.defineProperty(exports, "loadRemoteContexts", { enumerable: true, get: function () { return remote_js_1.loadRemoteContexts; } });
+Object.defineProperty(exports, "parseSourceUrl", { enumerable: true, get: function () { return remote_js_1.parseSourceUrl; } });
+Object.defineProperty(exports, "syncSource", { enumerable: true, get: function () { return remote_js_1.syncSource; } });
+Object.defineProperty(exports, "shouldAutoRefresh", { enumerable: true, get: function () { return remote_js_1.shouldAutoRefresh; } });
+Object.defineProperty(exports, "mergeContexts", { enumerable: true, get: function () { return remote_js_1.mergeContexts; } });
 //# sourceMappingURL=index.js.map

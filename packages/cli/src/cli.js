@@ -51,7 +51,7 @@ program
 program
   .command('auth')
   .description('Authenticate with contextd remote')
-  .argument('<action>', 'Action: login, logout')
+  .argument('<action>', 'Action: login, logout, status')
   .action(authCommand);
 
 program
