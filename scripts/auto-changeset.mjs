@@ -4,7 +4,7 @@ import { writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 const PACKAGES = {
-  'packages/core': '@contextd/core',
+  'packages/core': '@danfarrdotcom/core',
   'packages/cli': 'contextd',
   'packages/vscode': 'contextd-vscode',
 };

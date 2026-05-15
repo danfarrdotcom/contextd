@@ -10,12 +10,6 @@ npx contextd serve
 
 The server runs over **stdio transport** (not HTTP), which is the standard for MCP. It requires `@modelcontextprotocol/sdk` to be installed.
 
-### Options
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--port <port>` | `3333` | Port to serve on (for future HTTP support) |
-
 ## Available tools
 
 | Tool | Description | Parameters |
@@ -25,6 +19,7 @@ The server runs over **stdio transport** (not HTTP), which is the standard for M
 | `get_relevant_context` | Get context relevant to specific files | `files` — array of file paths |
 | `list_decisions` | List all architecture decision records (ADRs) | None |
 | `get_module_context` | Get context for a specific module or directory | `module` — module name or path |
+| `get_staleness_report` | Check which context files are stale relative to code changes | None |
 
 ## Configuring Claude Code
 
@@ -63,7 +58,7 @@ When the server starts, it:
 1. Finds the project root (directory containing `.context/`)
 2. Auto-refreshes stale remote sources (>24 hours old) non-blocking
 3. Warns if any source hasn't synced in >7 days
-4. Registers all 5 MCP tools
+4. Registers all 6 MCP tools
 5. Connects via stdio transport
 6. Prints the MCP configuration JSON to stderr for you to add to your `.mcp.json`
 
@@ -78,3 +73,8 @@ All MCP tools automatically include remote contexts if configured. When you call
 - **`get_relevant_context`** — Uses the same relevance algorithm as `export --files`: always includes project + conventions, adds matching modules by scope, and relevant decisions by tags
 - **`list_decisions`** — Lists all ADRs with titles and statuses
 - **`get_module_context`** — Finds a module context file by name or path and returns its content
+- **`get_staleness_report`** — Uses git history to check which context files are stale relative to code changes. Reports each file as fresh, warning, or stale with details on how many days and file changes have occurred since the context was last updated
+
+### Staleness awareness
+
+The `get_project_overview` tool automatically includes a staleness warning section when any context files are detected as stale. This means AI tools using the MCP server will know which context to trust less — without needing to explicitly call `get_staleness_report`.

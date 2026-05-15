@@ -15,6 +15,7 @@ contextd export [options]
 | `--format <format>` | Output format: `claude-md`, `cursorrules`, `raw`, `mcp` | `claude-md` |
 | `--output <path>` | Output file path (defaults to format standard) | — |
 | `--files <files>` | Comma-separated list of files to get context for | — |
+| `--warn-stale` | Warn if context files are stale relative to code changes | — |
 
 ## Formats
 
@@ -77,3 +78,24 @@ Relevance matching includes:
 - `architecture.md` (if files specified)
 - Modules whose `scope` matches the file paths
 - Decisions tagged with relevant keywords
+
+## Staleness warnings
+
+Pass `--warn-stale` to check if any exported context files are outdated relative to code changes:
+
+```bash
+contextd export --warn-stale
+```
+
+If stale context is detected, warnings are printed after the export:
+
+```
+  ✓ Exported to CLAUDE.md
+  23 lines · 1842 chars · 5 context files merged
+
+  ⚠ .context/modules/api.md is stale — code changed 45d ago (23 file changes)
+
+  Run contextd check for details
+```
+
+This uses git history to compare when context files were last updated vs when the code they describe was last changed. See [Context Files — Staleness detection](/context-files#staleness-detection) for details.

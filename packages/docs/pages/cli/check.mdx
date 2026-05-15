@@ -12,7 +12,7 @@ contextd check [options]
 
 | Flag | Description |
 |------|-------------|
-| `--fix` | Reserved for future auto-fix functionality (not yet implemented) |
+| `--fix` | Auto-fix simple issues (create missing files, add placeholders, update stale dates) |
 
 ## What it checks
 
@@ -40,6 +40,17 @@ Checks your source directories for modules that lack context files:
 - Warns if subdirectories exist without corresponding module context in `.context/modules/`
 - Checks up to 8 source directories, max 5 subdirectories per top-level directory
 
+### Code staleness
+
+Uses git history to detect when context files are out of date with the code they describe:
+
+- Compares when each context file was last committed vs when its covered code was last changed
+- Coverage is determined from the `covers` frontmatter field, or inferred from module `scope` and naming conventions
+- Reports severity as **warning** (minor drift) or **stale** (significant code changes since last context update)
+- Gracefully skips if git is not available
+
+See [Context Files — Staleness detection](/context-files#staleness-detection) for details on how coverage mapping works.
+
 ## Example output
 
 ```
@@ -56,6 +67,21 @@ Checks your source directories for modules that lack context files:
   3 passed · 4 warnings · 0 errors
 ```
 
+### With staleness detection
+
+```
+  Code Staleness Detection
+
+  ⚠  .context/modules/api.md is stale — code in src/api/** changed 45d ago (23 file changes)
+  ⚠  .context/conventions.md may be outdated — code in src/** changed 12d ago
+  ✓ 3 context file(s) are up-to-date with code
+```
+
 ## Auto-fix
 
-The `--fix` flag is reserved for future use. Auto-fix functionality is not yet implemented.
+The `--fix` flag automatically resolves simple issues:
+
+- Creates missing core files (`project.md`, `architecture.md`, `conventions.md`) with templates
+- Adds placeholder content to empty/comment-only files
+- Updates stale date markers
+- Creates module context stubs for uncovered source directories

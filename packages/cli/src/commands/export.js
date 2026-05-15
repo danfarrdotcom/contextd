@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
-import { findRoot, loadAllContext, getRelevantContext, buildExportOutput, loadRemoteContexts, mergeContexts, loadSourcesConfig, shouldAutoRefresh } from '@danfarrdotcom/core';
+import { findRoot, loadAllContext, getRelevantContext, buildExportOutput, loadRemoteContexts, mergeContexts, loadSourcesConfig, shouldAutoRefresh, getStalenessReport } from '@danfarrdotcom/core';
 import { syncNow } from './sync.js';
 
 const FORMATS = {
@@ -77,7 +77,31 @@ export async function exportCommand(options) {
 
     const lines = output.split('\n').length;
     const chars = output.length;
-    console.error(chalk.gray(`\n  ${lines} lines · ${chars} chars · ${contexts.length} context files merged\n`));
+    console.error(chalk.gray(`\n  ${lines} lines · ${chars} chars · ${contexts.length} context files merged`));
+
+    if (options.warnStale) {
+      try {
+        const localContexts = (await loadAllContext(rootDir)).all;
+        const report = getStalenessReport(rootDir, localContexts);
+        if (report.staleCount > 0 || report.warningCount > 0) {
+          console.error('');
+          for (const item of report.items) {
+            if (item.severity === 'stale') {
+              const rel = path.relative(rootDir, item.contextPath);
+              console.error(chalk.yellow(`  ⚠ ${rel} is stale — code changed ${item.staleDays}d ago (${item.changedFiles} file changes)`));
+            } else if (item.severity === 'warning') {
+              const rel = path.relative(rootDir, item.contextPath);
+              console.error(chalk.yellow(`  ⚠ ${rel} may be outdated — code changed ${item.staleDays}d ago`));
+            }
+          }
+          console.error(chalk.gray(`\n  Run ${chalk.cyan('contextd check')} for details`));
+        }
+      } catch {
+        // Git not available — skip staleness warnings
+      }
+    }
+
+    console.error('');
 
   } catch (err) {
     spinner.fail('Export failed');

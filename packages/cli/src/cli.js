@@ -28,6 +28,7 @@ program
   .option('--format <format>', 'Output format: claude-md, cursorrules, mcp, raw', 'claude-md')
   .option('--output <path>', 'Output file path (defaults to format standard)')
   .option('--files <files>', 'Comma-separated list of files to get context for')
+  .option('--warn-stale', 'Warn if context files are stale relative to code changes')
   .action(exportCommand);
 
 program

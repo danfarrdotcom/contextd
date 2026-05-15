@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mergeContexts = exports.shouldAutoRefresh = exports.syncSource = exports.parseSourceUrl = exports.loadRemoteContexts = exports.writeSourcesConfig = exports.loadSourcesConfig = exports.SOURCES_FILE = exports.REMOTE_DIR = exports.buildExportOutput = exports.getContextStats = exports.getRelevantContext = exports.loadAllContext = exports.loadContextFile = exports.findRoot = exports.CONTEXT_DIR = void 0;
+exports.getStalenessReport = exports.getStalenessInfo = exports.getCoverageMap = exports.mergeContexts = exports.shouldAutoRefresh = exports.syncSource = exports.parseSourceUrl = exports.loadRemoteContexts = exports.writeSourcesConfig = exports.loadSourcesConfig = exports.SOURCES_FILE = exports.REMOTE_DIR = exports.buildExportOutput = exports.getContextStats = exports.getRelevantContext = exports.loadAllContext = exports.loadContextFile = exports.findRoot = exports.CONTEXT_DIR = void 0;
 var context_js_1 = require("./context.js");
 Object.defineProperty(exports, "CONTEXT_DIR", { enumerable: true, get: function () { return context_js_1.CONTEXT_DIR; } });
 Object.defineProperty(exports, "findRoot", { enumerable: true, get: function () { return context_js_1.findRoot; } });
@@ -19,4 +19,8 @@ Object.defineProperty(exports, "parseSourceUrl", { enumerable: true, get: functi
 Object.defineProperty(exports, "syncSource", { enumerable: true, get: function () { return remote_js_1.syncSource; } });
 Object.defineProperty(exports, "shouldAutoRefresh", { enumerable: true, get: function () { return remote_js_1.shouldAutoRefresh; } });
 Object.defineProperty(exports, "mergeContexts", { enumerable: true, get: function () { return remote_js_1.mergeContexts; } });
+var staleness_js_1 = require("./staleness.js");
+Object.defineProperty(exports, "getCoverageMap", { enumerable: true, get: function () { return staleness_js_1.getCoverageMap; } });
+Object.defineProperty(exports, "getStalenessInfo", { enumerable: true, get: function () { return staleness_js_1.getStalenessInfo; } });
+Object.defineProperty(exports, "getStalenessReport", { enumerable: true, get: function () { return staleness_js_1.getStalenessReport; } });
 //# sourceMappingURL=index.js.map

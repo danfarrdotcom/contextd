@@ -28,3 +28,15 @@ export {
 } from './remote.js';
 
 export type { SyncSource, SourcesConfig } from './remote.js';
+
+export {
+  getCoverageMap,
+  getStalenessInfo,
+  getStalenessReport,
+} from './staleness.js';
+
+export type {
+  CoverageMapping,
+  StalenessInfo,
+  StalenessReport,
+} from './staleness.js';
