@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import { findRoot, getContextStats, loadAllContext } from '@danfarrdotcom/core';
+import { findRoot, getContextStats, loadAllContext, getStalenessReport } from '@danfarrdotcom/core';
 
 export async function checkCommand(options) {
   const rootDir = await findRoot(process.cwd());
@@ -123,6 +123,31 @@ export async function checkCommand(options) {
         warnings.push(`${dir}/ has no module context — consider adding .context/modules/${moduleName}.md`);
       }
     }
+  }
+
+  // Check context staleness vs code changes (git-based)
+  try {
+    const report = getStalenessReport(rootDir, ctx.all);
+    if (report.staleCount > 0 || report.warningCount > 0) {
+      console.error(chalk.bold('\n  Code Staleness Detection\n'));
+      for (const item of report.items) {
+        const rel = path.relative(rootDir, item.contextPath);
+        if (item.severity === 'stale') {
+          const coversStr = item.covers.join(', ');
+          warnings.push(`${rel} is stale — code in ${coversStr} changed ${item.staleDays}d ago (${item.changedFiles} file changes)`);
+        } else if (item.severity === 'warning') {
+          const coversStr = item.covers.join(', ');
+          warnings.push(`${rel} may be outdated — code in ${coversStr} changed ${item.staleDays}d ago`);
+        }
+      }
+      if (report.freshCount > 0) {
+        passes.push(`${report.freshCount} context file(s) are up-to-date with code`);
+      }
+    } else if (report.items.some(i => i.covers.length > 0)) {
+      passes.push('All context files are up-to-date with code changes');
+    }
+  } catch {
+    // Git not available or not a git repo — skip staleness check
   }
 
   // Print results

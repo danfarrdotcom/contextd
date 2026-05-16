@@ -1,5 +1,6 @@
 import chalk from 'chalk';
-import { findRoot, loadAllContext, getRelevantContext, loadRemoteContexts, mergeContexts, loadSourcesConfig, shouldAutoRefresh } from '@danfarrdotcom/core';
+import path from 'path';
+import { findRoot, loadAllContext, getRelevantContext, loadRemoteContexts, mergeContexts, loadSourcesConfig, shouldAutoRefresh, getStalenessReport } from '@danfarrdotcom/core';
 import { syncNow } from './sync.js';
 
 export async function serveCommand(options) {
@@ -56,6 +57,21 @@ export async function serveCommand(options) {
 
     if (project) parts.push(project.content);
     if (architecture) parts.push(`## Architecture\n\n${architecture.content}`);
+
+    try {
+      const report = getStalenessReport(rootDir, ctx.all);
+      if (report.staleCount > 0 || report.warningCount > 0) {
+        const staleItems = report.items
+          .filter(i => i.severity !== 'fresh')
+          .map(i => {
+            const rel = path.relative(rootDir, i.contextPath);
+            return `- **${rel}**: code changed ${i.staleDays}d after last context update (${i.changedFiles} file changes) [${i.severity}]`;
+          });
+        parts.push(`## ⚠ Stale Context Warning\n\nThe following context files may be outdated — the code they describe has changed since they were last updated:\n\n${staleItems.join('\n')}\n\nTreat information from these files with caution and verify against the actual code.`);
+      }
+    } catch {
+      // Git not available
+    }
 
     return {
       content: [{
@@ -134,6 +150,33 @@ export async function serveCommand(options) {
       };
     }
   );
+
+  // Tool: get_staleness_report
+  server.tool('get_staleness_report', 'Check which context files are stale relative to code changes', {}, async () => {
+    try {
+      const ctx = await loadAllContext(rootDir);
+      const report = getStalenessReport(rootDir, ctx.all);
+
+      if (report.items.every(i => i.covers.length === 0)) {
+        return { content: [{ type: 'text', text: 'No context files have code coverage mappings. Add `covers:` frontmatter to your .context/ files to enable staleness detection.' }] };
+      }
+
+      const lines = report.items
+        .filter(i => i.covers.length > 0)
+        .map(i => {
+          const rel = path.relative(rootDir, i.contextPath);
+          const coversStr = i.covers.join(', ');
+          if (i.severity === 'fresh') return `✓ ${rel} — fresh (covers: ${coversStr})`;
+          if (i.severity === 'warning') return `⚠ ${rel} — code changed ${i.staleDays}d ago (covers: ${coversStr})`;
+          return `✗ ${rel} — STALE, code changed ${i.staleDays}d ago, ${i.changedFiles} file changes (covers: ${coversStr})`;
+        });
+
+      const summary = `${report.freshCount} fresh · ${report.warningCount} warnings · ${report.staleCount} stale`;
+      return { content: [{ type: 'text', text: `# Context Staleness Report\n\n${summary}\n\n${lines.join('\n')}` }] };
+    } catch (err) {
+      return { content: [{ type: 'text', text: `Staleness check failed: ${err.message}. This requires a git repository.` }] };
+    }
+  });
 
   // Start server
   const transport = new StdioServerTransport();

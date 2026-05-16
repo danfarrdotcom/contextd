@@ -52,7 +52,7 @@ Check `.context/` into git. Everyone on your team gets the same AI behavior. New
 |---|---|---|
 | [`contextd`](packages/cli) | CLI tool | `npm i -g contextd` |
 | [`contextd-vscode`](packages/vscode) | VS Code extension | [Marketplace](#) |
-| [`@contextd/core`](packages/core) | Shared library | `npm i @contextd/core` |
+| [`@danfarrdotcom/core`](packages/core) | Shared library | `npm i @danfarrdotcom/core` |
 
 ---
 
@@ -68,9 +68,10 @@ contextd export                            # → CLAUDE.md
 contextd export --format cursorrules       # → .cursorrules
 contextd export --format raw               # → stdout
 contextd export --files src/api/users.ts   # context for specific files only
+contextd export --warn-stale               # warn if context is outdated vs code
 
 # Health check
-contextd check                             # find gaps, stale files, empty templates
+contextd check                             # find gaps, stale context, empty templates
 
 # Architecture decisions
 contextd decision add "Why we use tRPC"
@@ -107,7 +108,7 @@ contextd sync publish --dry-run                     # preview without pushing
 }
 ```
 
-Available tools: `get_project_overview`, `get_conventions`, `get_relevant_context`, `list_decisions`, `get_module_context`
+Available tools: `get_project_overview`, `get_conventions`, `get_relevant_context`, `list_decisions`, `get_module_context`, `get_staleness_report`
 
 ---
 
@@ -184,7 +185,7 @@ Features:
 | Team sharing | Copy-paste | Git-native |
 | Organization | Gets huge fast | Modular files |
 | Tool switching | Rewrite everything | `export --format` |
-| Staleness detection | Never | `contextd check` |
+| Staleness detection | Never | Git-aware, automatic |
 | Relevant-only context | All or nothing | `--files` flag |
 | Decision tracking | Separate doc | Built-in ADRs |
 | MCP integration | Manual | `contextd serve` |

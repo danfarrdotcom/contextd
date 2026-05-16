@@ -126,6 +126,7 @@ All context files use Markdown with YAML frontmatter.
 | `tags` | `string[]` | Tags for filtering (used by decisions and sync filters) |
 | `priority` | `string` | Priority level: `high`, `medium`, `low`, `normal` |
 | `scope` | `string` | Directory scope for module contexts (e.g., `src/api`) |
+| `covers` | `string[]` | File/directory globs this context describes (for staleness detection) |
 
 ### Decision-specific fields
 
@@ -179,3 +180,41 @@ updated: 2026-05-03
 
 ...
 ```
+
+### Example: context file with explicit coverage
+
+```markdown
+---
+title: Authentication
+updated: 2026-05-03
+covers:
+  - src/auth/**
+  - src/middleware/auth.ts
+---
+
+# Authentication
+
+...
+```
+
+## Staleness detection
+
+contextd uses git history to detect when context files become stale. If the code a context file describes has changed since the context was last updated, `contextd check` will warn you.
+
+### How coverage is determined
+
+1. **Explicit** — Add a `covers` field to your frontmatter listing the file/directory globs this context describes
+2. **Inferred** — If no `covers` field is present:
+   - Module files (`modules/api.md`) automatically cover their `scope` directory or matching source directories
+   - `conventions.md` and `architecture.md` cover all source directories
+   - `project.md` and decision files have no automatic coverage
+
+Explicit `covers` is recommended for precise staleness tracking. Inference works well for module files with a `scope` field.
+
+### Severity levels
+
+| Severity | Condition |
+|----------|-----------|
+| **Fresh** | Code hasn't changed since the context was last updated, or changed less than 7 days ago |
+| **Warning** | Code changed 7–30 days after the context was last updated, or fewer than 10 file changes |
+| **Stale** | Code changed more than 30 days after context update, with 10+ file changes |
